@@ -1,8 +1,8 @@
 package com.unipi.msc.raiseupapi.Model;
 
+import com.unipi.msc.raiseupapi.Model.User.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Columns;
 
 import java.util.ArrayList;
 import java.util.List;
