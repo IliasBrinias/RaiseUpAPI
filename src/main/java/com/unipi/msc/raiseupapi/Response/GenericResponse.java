@@ -21,6 +21,11 @@ public class GenericResponse<T> {
         this.code = Tags.HTTP_BAD_REQUEST;
         return ResponseEntity.badRequest().body(this);
     }
+    public ResponseEntity<?> accessDenied(){
+        this.code = Tags.HTTP_ACCESS_DENIED;
+        this.message = Tags.ACCESS_DENIED;
+        return ResponseEntity.badRequest().body(this);
+    }
     public ResponseEntity<?> response(){
         return ResponseEntity.badRequest().body(this);
     }

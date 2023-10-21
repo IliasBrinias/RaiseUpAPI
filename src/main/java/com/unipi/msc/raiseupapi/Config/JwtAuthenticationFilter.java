@@ -1,6 +1,5 @@
 package com.unipi.msc.raiseupapi.Config;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         try {
             userEmail = jwtService.extractUsername(jwt);
-        }catch (ExpiredJwtException e){
+        }catch (Exception ignore){
             userEmail = null;
         }
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){

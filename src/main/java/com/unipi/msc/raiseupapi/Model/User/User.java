@@ -1,14 +1,12 @@
 package com.unipi.msc.raiseupapi.Model.User;
 
 import com.unipi.msc.raiseupapi.Model.Role;
-import com.unipi.msc.raiseupapi.Model.Task;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,6 +16,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(value = "USER")
 public class User implements UserDetails {
     @Id
     @GeneratedValue
@@ -28,15 +29,10 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String fcmId;
+    @Column(insertable=false, updatable=false)
     @Enumerated(EnumType.STRING)
     @NonNull
     private Role role;
-
-    @ManyToMany
-    @JoinTable(name = "User_tasks",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "tasks_id"))
-    private List<Task> tasks = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

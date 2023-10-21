@@ -1,12 +1,8 @@
 package com.unipi.msc.raiseupapi.Model;
 
-import com.unipi.msc.raiseupapi.Model.User.User;
+import com.unipi.msc.raiseupapi.Model.User.Admin;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +20,8 @@ public class Board {
     private String title;
     @OneToOne
     @JoinColumn(name = "admin_id")
-    private User admin;
+    private Admin admin;
 
     @OneToMany(mappedBy = "board", orphanRemoval = true)
     private List<Step> columns = new ArrayList<>();
-
 }
