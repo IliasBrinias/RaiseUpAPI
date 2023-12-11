@@ -1,6 +1,6 @@
 package com.unipi.msc.raiseupapi.Response;
 
-import com.unipi.msc.raiseupapi.Model.User.User;
+import com.unipi.msc.raiseupapi.Model.User;
 import lombok.*;
 
 @Getter

@@ -5,10 +5,7 @@ import com.unipi.msc.raiseupapi.Request.LoginRequest;
 import com.unipi.msc.raiseupapi.Request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -25,5 +22,10 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         return iAuth.login(request);
+    }
+
+    @PostMapping("createAdmin/{id}")
+    public ResponseEntity<?> createAdmin(@PathVariable Long id){
+        return iAuth.createAdmin(id);
     }
 }

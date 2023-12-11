@@ -7,4 +7,6 @@ import org.springframework.http.ResponseEntity;
 public interface IAuth {
     ResponseEntity<?> register(RegisterRequest request);
     ResponseEntity<?> login(LoginRequest request);
+
+    ResponseEntity<?> createAdmin(Long id);
 }

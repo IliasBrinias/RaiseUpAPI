@@ -3,12 +3,14 @@ package com.unipi.msc.raiseupapi.Service;
 import com.unipi.msc.raiseupapi.Config.JwtService;
 import com.unipi.msc.raiseupapi.Interface.IAuth;
 import com.unipi.msc.raiseupapi.Model.Role;
-import com.unipi.msc.raiseupapi.Model.User.User;
-import com.unipi.msc.raiseupapi.Model.User.UserRepository;
+import com.unipi.msc.raiseupapi.Model.User;
+import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Request.LoginRequest;
 import com.unipi.msc.raiseupapi.Request.RegisterRequest;
 import com.unipi.msc.raiseupapi.Response.GenericResponse;
 import com.unipi.msc.raiseupapi.Response.LoginResponse;
+import com.unipi.msc.raiseupapi.Response.UserPresenter;
+import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,11 +27,19 @@ public class AuthService implements IAuth {
     private final AuthenticationManager authenticationManager;
     @Override
     public ResponseEntity<?> register(RegisterRequest request) {
+        if (userRepository.existsUserByUsername(request.getUsername())){
+            GenericResponse.builder().message(ErrorMessages.USERNAME_EXISTS).build().success();
+        }
+        if (userRepository.existsUserByEmail(request.getEmail())){
+            GenericResponse.builder().message(ErrorMessages.EMAIL_EXISTS).build().success();
+        }
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.valueOf(request.getRole()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .role(Role.EMPLOYEE)
                 .build();
         user = userRepository.save(user);
         return GenericResponse.builder().data(LoginResponse.getResponse(user,generateToken(user))).build().success();
@@ -48,8 +58,18 @@ public class AuthService implements IAuth {
         if (user == null) return  ResponseEntity.notFound().build();
         return GenericResponse.builder().data(LoginResponse.getResponse(user,generateToken(user))).build().success();
     }
+
+    @Override
+    public ResponseEntity<?> createAdmin(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+        user.setRole(Role.ADMIN);
+        User u = userRepository.save(user);
+        return GenericResponse.builder().data(UserPresenter.getPresenter(u)).build().success();
+    }
+
     public String generateToken(User user) {
-        String generatedToken = jwtService.generateToken(new User(){
+        return jwtService.generateToken(new User(){
             @Override
             public String getUsername() {
                 if (user.getUsername()!=null){
@@ -59,6 +79,5 @@ public class AuthService implements IAuth {
                 }
             }
         });
-        return generatedToken;
     }
 }

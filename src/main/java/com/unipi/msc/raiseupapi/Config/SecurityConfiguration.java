@@ -27,7 +27,8 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                    .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/createAdmin/**").authenticated()
+                    .requestMatchers("/auth/register", "/auth/login").permitAll()
                     .anyRequest().authenticated())
                 .exceptionHandling(ex->ex.authenticationEntryPoint(point))
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

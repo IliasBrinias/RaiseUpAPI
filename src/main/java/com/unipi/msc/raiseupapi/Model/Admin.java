@@ -1,4 +1,4 @@
-package com.unipi.msc.raiseupapi.Model.User;
+package com.unipi.msc.raiseupapi.Model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

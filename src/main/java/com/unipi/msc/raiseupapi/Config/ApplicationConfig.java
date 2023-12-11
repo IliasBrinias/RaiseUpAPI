@@ -1,7 +1,7 @@
 package com.unipi.msc.raiseupapi.Config;
 
-import com.unipi.msc.raiseupapi.Model.User.User;
-import com.unipi.msc.raiseupapi.Model.User.UserRepository;
+import com.unipi.msc.raiseupapi.Model.User;
+import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

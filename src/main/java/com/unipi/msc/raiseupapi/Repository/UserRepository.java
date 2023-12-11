@@ -1,5 +1,6 @@
-package com.unipi.msc.raiseupapi.Model.User;
+package com.unipi.msc.raiseupapi.Repository;
 
+import com.unipi.msc.raiseupapi.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findAllByIdIs(Long id);
 
+    boolean existsUserByUsername(String Username);
+    boolean existsUserByEmail(String Email);
 }

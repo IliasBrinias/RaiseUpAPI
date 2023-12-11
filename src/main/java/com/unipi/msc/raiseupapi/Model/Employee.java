@@ -1,6 +1,5 @@
-package com.unipi.msc.raiseupapi.Model.User;
+package com.unipi.msc.raiseupapi.Model;
 
-import com.unipi.msc.raiseupapi.Model.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

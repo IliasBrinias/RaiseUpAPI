@@ -1,6 +1,5 @@
-package com.unipi.msc.raiseupapi.Model.User;
+package com.unipi.msc.raiseupapi.Model;
 
-import com.unipi.msc.raiseupapi.Model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +22,9 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Long id;
+    @Column(unique = true)
     private String email;
+    @Column(unique = true)
     private String username;
     private String password;
     private String firstName;

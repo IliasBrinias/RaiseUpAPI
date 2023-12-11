@@ -1,6 +1,5 @@
 package com.unipi.msc.raiseupapi.Model;
 
-import com.unipi.msc.raiseupapi.Model.User.Employee;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,4 +29,7 @@ public class Task {
 
     @OneToMany(mappedBy = "task", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "task", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<ProjectTagLink> projectTagLinks = new ArrayList<>();
 }

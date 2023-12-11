@@ -1,6 +1,5 @@
 package com.unipi.msc.raiseupapi.Model;
 
-import com.unipi.msc.raiseupapi.Model.User.Admin;
 import jakarta.persistence.*;
 import lombok.*;
 
