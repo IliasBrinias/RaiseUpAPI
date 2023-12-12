@@ -30,6 +30,8 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String fcmId;
+    @OneToOne
+    private Image image;
     @Column(insertable=false, updatable=false)
     @Enumerated(EnumType.STRING)
     @NonNull
