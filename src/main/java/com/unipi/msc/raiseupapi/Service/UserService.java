@@ -10,9 +10,7 @@ import com.unipi.msc.raiseupapi.Response.GenericResponse;
 import com.unipi.msc.raiseupapi.Response.UserPresenter;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +20,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,21 +58,17 @@ public class UserService implements IUser {
     @Override
     public ResponseEntity<?> getUserImage(Long userId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        HttpHeaders header = new HttpHeaders();
-        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + user.getImage().getFileName() + user.getImage().getFileType());
-        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        header.add("Pragma", "no-cache");
-        header.add("Expires", "0");
-
-        File file = new File(getDirPath() + File.separator + user.getImage().getFileName() + user.getImage().getFileType());
-        Resource resource = new FileSystemResource(file);
-
-        return ResponseEntity.ok()
-                .headers(header)
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);    }
+        try {
+            File file = new File(getDirPath() + File.separator + user.getImage().getFileName());
+            InputStream targetStream = new FileInputStream(file);
+            return ResponseEntity.ok()
+                    .contentLength(file.length())
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(IOUtils.toByteArray(targetStream));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     private Image saveFile(MultipartFile multipartFile, String fileName){
 

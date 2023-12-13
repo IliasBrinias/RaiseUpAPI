@@ -17,9 +17,11 @@ public class UserPresenter {
     private String firstName;
     private String lastName;
     private String role;
+    private String token;
+    private String profile;
 
     public static UserPresenter getPresenter(User u){
-        return UserPresenter.builder()
+        UserPresenter userPresenter = UserPresenter.builder()
                 .id(u.getId())
                 .email(u.getEmail())
                 .username(u.getUsername())
@@ -27,5 +29,14 @@ public class UserPresenter {
                 .lastName(u.getLastName())
                 .role(u.getRole().name())
                 .build();
+        if (u.getImage()!=null){
+            userPresenter.setProfile("user/image/"+u.getId());
+        }
+        return userPresenter;
+    }
+    public static UserPresenter getPresenter(User u, String token){
+        UserPresenter userPresenter = getPresenter(u);
+        userPresenter.setToken(token);
+        return userPresenter;
     }
 }

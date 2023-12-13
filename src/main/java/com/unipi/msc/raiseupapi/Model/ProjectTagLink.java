@@ -20,5 +20,5 @@ public class ProjectTagLink {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "projectTag_id")
-    private ProjectTag projectTag;
+    private Tag tag;
 }

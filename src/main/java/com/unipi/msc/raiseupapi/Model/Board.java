@@ -17,6 +17,7 @@ public class Board {
     @GeneratedValue
     private Long id;
     private String title;
+    private Long date;
     @OneToOne
     @JoinColumn(name = "admin_id")
     private Admin admin;

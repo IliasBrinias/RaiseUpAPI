@@ -12,11 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectTag {
+public class Tag {
     @Id
     @GeneratedValue
     private Long id;
-    private String tag;
-    @OneToMany(mappedBy = "projectTag", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private String name;
+    private String color;
+    @OneToMany(mappedBy = "tag", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ProjectTagLink> projectTagLinks = new ArrayList<>();
 }

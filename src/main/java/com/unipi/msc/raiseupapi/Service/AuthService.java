@@ -8,7 +8,6 @@ import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Request.LoginRequest;
 import com.unipi.msc.raiseupapi.Request.RegisterRequest;
 import com.unipi.msc.raiseupapi.Response.GenericResponse;
-import com.unipi.msc.raiseupapi.Response.LoginResponse;
 import com.unipi.msc.raiseupapi.Response.UserPresenter;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,7 @@ public class AuthService implements IAuth {
                 .role(Role.EMPLOYEE)
                 .build();
         user = userRepository.save(user);
-        return GenericResponse.builder().data(LoginResponse.getResponse(user,generateToken(user))).build().success();
+        return GenericResponse.builder().data(UserPresenter.getPresenter(user,generateToken(user))).build().success();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class AuthService implements IAuth {
             user = userRepository.findByEmail(request.getEmail()).orElse(null);
         }
         if (user == null) return  ResponseEntity.notFound().build();
-        return GenericResponse.builder().data(LoginResponse.getResponse(user,generateToken(user))).build().success();
+        return GenericResponse.builder().data(UserPresenter.getPresenter(user,generateToken(user))).build().success();
     }
 
     @Override
