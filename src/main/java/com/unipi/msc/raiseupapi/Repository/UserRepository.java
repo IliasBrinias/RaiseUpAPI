@@ -4,6 +4,7 @@ import com.unipi.msc.raiseupapi.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -12,7 +13,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByUsernameOrEmail(String username, String email);
     Optional<User> findByEmail(String email);
     Optional<User> findAllByIdIs(Long id);
-
+    Optional<List<User>> findUsersByIdIn(List<Long> ids);
+    Optional<List<User>> findUsersByUsernameLikeOrEmailLikeOrFirstNameLikeOrLastNameLike(String username, String email, String firstName, String lastName);
     boolean existsUserByUsername(String Username);
     boolean existsUserByEmail(String Email);
 }

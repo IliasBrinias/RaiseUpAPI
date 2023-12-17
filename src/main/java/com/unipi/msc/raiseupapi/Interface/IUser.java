@@ -9,4 +9,6 @@ public interface IUser {
     ResponseEntity<?> editUser(EditUserRequest request);
 
     ResponseEntity<?> getUserImage(Long userId);
+
+    ResponseEntity<?> searchUser(String keyword);
 }

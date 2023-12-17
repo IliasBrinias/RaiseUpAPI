@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,8 +31,13 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String fcmId;
+
     @OneToOne
     private Image image;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Board> boards = new ArrayList<>();
+
     @Column(insertable=false, updatable=false)
     @Enumerated(EnumType.STRING)
     @NonNull

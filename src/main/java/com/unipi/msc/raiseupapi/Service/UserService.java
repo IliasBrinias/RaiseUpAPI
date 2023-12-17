@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -68,6 +70,17 @@ public class UserService implements IUser {
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @Override
+    public ResponseEntity<?> searchUser(String keyword) {
+        List<User> userList;
+        if (keyword.isEmpty()){
+            userList = userRepository.findAll();
+        }else{
+            userList = userRepository.findUsersByUsernameLikeOrEmailLikeOrFirstNameLikeOrLastNameLike(keyword,keyword,keyword,keyword).orElse(new ArrayList<>());
+        }
+        return GenericResponse.builder().data(UserPresenter.getPresenter(userList)).build().success();
     }
 
     private Image saveFile(MultipartFile multipartFile, String fileName){

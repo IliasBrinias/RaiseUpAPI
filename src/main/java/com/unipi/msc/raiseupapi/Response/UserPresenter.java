@@ -1,10 +1,15 @@
 package com.unipi.msc.raiseupapi.Response;
 
+import com.unipi.msc.raiseupapi.Model.Employee;
 import com.unipi.msc.raiseupapi.Model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +39,17 @@ public class UserPresenter {
         }
         return userPresenter;
     }
+    public static List<UserPresenter> getPresenter(Collection<Employee> users) {
+        List<UserPresenter> presenters = new ArrayList<>();
+        users.forEach(u -> presenters.add(getPresenter(u)));
+        return presenters;
+    }
+    public static List<UserPresenter> getPresenter(List<User> users){
+        List<UserPresenter> presenters = new ArrayList<>();
+        users.forEach(u -> presenters.add(getPresenter(u)));
+        return presenters;
+    }
+
     public static UserPresenter getPresenter(User u, String token){
         UserPresenter userPresenter = getPresenter(u);
         userPresenter.setToken(token);
