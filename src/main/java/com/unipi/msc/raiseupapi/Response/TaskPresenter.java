@@ -29,6 +29,7 @@ public class TaskPresenter {
                 .build();
     }
     public static List<TaskPresenter> getPresenter(List<Task> tasks) {
+        if (tasks == null) return null;
         List<TaskPresenter> presenters = new ArrayList<>();
         tasks.forEach(task -> presenters.add(TaskPresenter.getPresenter(task)));
         return presenters;

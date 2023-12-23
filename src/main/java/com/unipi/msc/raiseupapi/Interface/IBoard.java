@@ -8,4 +8,6 @@ public interface IBoard {
     ResponseEntity<?> getBoard(Long boardId);
 
     ResponseEntity<?> createBoard(BoardRequest request);
+
+    ResponseEntity<?> getBoardEmployees(Long boardId);
 }

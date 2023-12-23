@@ -83,6 +83,12 @@ public class UserService implements IUser {
         return GenericResponse.builder().data(UserPresenter.getPresenter(userList)).build().success();
     }
 
+    @Override
+    public ResponseEntity<?> getUsers() {
+        List<UserPresenter> users = UserPresenter.getPresenter(userRepository.findAll());
+        return GenericResponse.builder().data(users).build().success();
+    }
+
     private Image saveFile(MultipartFile multipartFile, String fileName){
 
         Path dirPath = getDirPath();

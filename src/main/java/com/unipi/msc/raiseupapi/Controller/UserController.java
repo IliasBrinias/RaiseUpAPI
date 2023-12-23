@@ -16,6 +16,10 @@ public class UserController {
     public ResponseEntity<?> getUser(){
         return iUser.getUser();
     }
+    @GetMapping("all")
+    public ResponseEntity<?> getUsers(){
+        return iUser.getUsers();
+    }
     @GetMapping("image/{userId}")
     public ResponseEntity<?> getUserImage(@PathVariable Long userId){
         return iUser.getUserImage(userId);
@@ -24,7 +28,6 @@ public class UserController {
     public ResponseEntity<?> searchUser(@RequestParam String keyword){
         return iUser.searchUser(keyword);
     }
-
     @PatchMapping
     public ResponseEntity<?> editUser(@ModelAttribute EditUserRequest request){
         return iUser.editUser(request);

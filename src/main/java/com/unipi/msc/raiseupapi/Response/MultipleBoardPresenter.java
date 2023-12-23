@@ -31,4 +31,9 @@ public class MultipleBoardPresenter {
         presenter.setTotalTasks(totalTasks.get());
         return presenter;
     }
+    public static List<MultipleBoardPresenter> getPresenter(List <Board> boards) {
+        List<MultipleBoardPresenter> presenters = new ArrayList<>();
+        boards.forEach(board -> presenters.add(MultipleBoardPresenter.getPresenter(board)));
+        return presenters;
+    }
 }
