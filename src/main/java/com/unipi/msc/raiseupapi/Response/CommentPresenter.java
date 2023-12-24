@@ -23,6 +23,7 @@ public class CommentPresenter {
                 .build();
     }
     public static List<CommentPresenter> getPresenter(List<Comment> comments){
+        if (comments == null) return null;
         List<CommentPresenter> presenters = new ArrayList<>();
         comments.forEach(comment -> presenters.add(getPresenter(comment)));
         return presenters;

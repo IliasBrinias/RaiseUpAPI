@@ -2,7 +2,6 @@ package com.unipi.msc.raiseupapi.Service;
 
 import com.unipi.msc.raiseupapi.Interface.IBoard;
 import com.unipi.msc.raiseupapi.Model.Board;
-import com.unipi.msc.raiseupapi.Model.Employee;
 import com.unipi.msc.raiseupapi.Model.Step;
 import com.unipi.msc.raiseupapi.Model.User;
 import com.unipi.msc.raiseupapi.Repository.BoardRepository;
@@ -20,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -55,9 +53,10 @@ public class BoardService implements IBoard {
         if (request.getColumns() == null) return GenericResponse.builder().message(ErrorMessages.NO_COLUMNS_FOUND).build().badRequest();
 
         List<Step> steps = new ArrayList<>();
-        for (String column : request.getColumns()){
+        for (int i = 0; i < request.getColumns().size(); i++) {
             Step step = stepRepository.save(Step.builder()
-                    .title(column)
+                    .title(request.getColumns().get(i))
+                    .position((long) i)
                     .build());
             steps.add(step);
         }

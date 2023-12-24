@@ -18,6 +18,6 @@ public class Tag {
     private Long id;
     private String name;
     private String color;
-    @OneToMany(mappedBy = "tag", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<ProjectTagLink> projectTagLinks = new ArrayList<>();
+    @ManyToMany
+    private List<Task> tasks = new ArrayList<>();
 }

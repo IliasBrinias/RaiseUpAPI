@@ -17,7 +17,7 @@ public class Step {
     @GeneratedValue
     private Long id;
     private String title;
-
+    private Long position;
     @OneToMany(mappedBy = "step", orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 

@@ -42,7 +42,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @NonNull
     private Role role;
-
+    @ManyToMany
+    private List<Task> tasks = new ArrayList<>();
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

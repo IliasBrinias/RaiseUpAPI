@@ -1,6 +1,5 @@
 package com.unipi.msc.raiseupapi.Response;
 
-import com.unipi.msc.raiseupapi.Model.Employee;
 import com.unipi.msc.raiseupapi.Model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +38,7 @@ public class UserPresenter {
         }
         return userPresenter;
     }
-    public static List<UserPresenter> getPresenter(Collection<Employee> users) {
+    public static List<UserPresenter> getPresenter(Collection<User> users) {
         List<UserPresenter> presenters = new ArrayList<>();
         users.forEach(u -> presenters.add(getPresenter(u)));
         return presenters;
