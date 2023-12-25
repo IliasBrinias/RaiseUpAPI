@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("board")
 @RequiredArgsConstructor
 public class BoardController {
-
     private final IBoard iBoard;
-
     @GetMapping
     public ResponseEntity<?> getBoards(){
         return iBoard.getBoards();

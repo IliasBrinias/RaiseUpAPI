@@ -13,6 +13,7 @@ import java.util.List;
 public class StepPresenter {
     private Long id;
     private String title;
+    private Long boardId;
     private List<TaskPresenter> tasks = new ArrayList<>();
     public static List<StepPresenter> getPresenter(List<Step> steps) {
         List<StepPresenter> presenters = new ArrayList<>();
@@ -23,7 +24,16 @@ public class StepPresenter {
         return StepPresenter.builder()
                 .id(step.getId())
                 .title(step.getTitle())
+                .boardId(step.getBoard().getId())
                 .tasks(TaskPresenter.getPresenter(step.getTasks()))
                 .build();
     }
+    public static StepPresenter getPresenterWithoutTask(Step step){
+        return StepPresenter.builder()
+                .id(step.getId())
+                .boardId(step.getBoard().getId())
+                .title(step.getTitle())
+                .build();
+    }
+
 }

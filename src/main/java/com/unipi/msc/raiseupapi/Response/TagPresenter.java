@@ -3,6 +3,9 @@ package com.unipi.msc.raiseupapi.Response;
 import com.unipi.msc.raiseupapi.Model.Tag;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -18,5 +21,10 @@ public class TagPresenter {
                 .name(tag.getName())
                 .color(tag.getColor())
                 .build();
+    }
+    public static List<TagPresenter> getPresenter(List<Tag> tags){
+        List<TagPresenter> presenters = new ArrayList<>();
+        tags.forEach(tag -> presenters.add(getPresenter(tag)));
+        return presenters;
     }
 }

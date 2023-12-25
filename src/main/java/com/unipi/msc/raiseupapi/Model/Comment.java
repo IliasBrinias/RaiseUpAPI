@@ -14,7 +14,7 @@ public class Comment {
     @GeneratedValue
     private Long id;
     private String message;
-    private Long timestamp;
+    private Long date;
 
     @ManyToOne
     @JoinColumn(name = "task_id")

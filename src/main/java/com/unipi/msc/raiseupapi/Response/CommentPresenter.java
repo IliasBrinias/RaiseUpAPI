@@ -14,12 +14,12 @@ import java.util.List;
 public class CommentPresenter {
     private Long id;
     private String message;
-    private Long timestamp;
+    private Long date;
     public static CommentPresenter getPresenter(Comment comment){
         return CommentPresenter.builder()
                 .id(comment.getId())
                 .message(comment.getMessage())
-                .timestamp(comment.getTimestamp())
+                .date(comment.getDate())
                 .build();
     }
     public static List<CommentPresenter> getPresenter(List<Comment> comments){
