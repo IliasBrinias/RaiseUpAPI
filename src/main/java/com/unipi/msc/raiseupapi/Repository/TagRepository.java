@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tag,Long> {
     Optional<Tag> findById(Long id);
     Optional<List<Tag>> findByIdIn(List<Long> id);
+    Optional<List<Tag>> findAllByNameLike(String keyword);
 }

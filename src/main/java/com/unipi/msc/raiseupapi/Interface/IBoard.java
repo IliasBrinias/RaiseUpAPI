@@ -10,4 +10,8 @@ public interface IBoard {
     ResponseEntity<?> createBoard(BoardRequest request);
 
     ResponseEntity<?> getBoardEmployees(Long boardId);
+
+    ResponseEntity<?> updateBoard(Long boardId, BoardRequest request);
+
+    ResponseEntity<?> getBoardColumns(Long boardId);
 }

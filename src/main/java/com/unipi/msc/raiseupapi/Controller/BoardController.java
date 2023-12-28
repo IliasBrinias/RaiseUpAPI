@@ -23,8 +23,16 @@ public class BoardController {
     public ResponseEntity<?> getBoard(@PathVariable Long boardId){
         return iBoard.getBoard(boardId);
     }
+    @GetMapping("{boardId}/columns")
+    public ResponseEntity<?> getBoardColumns(@PathVariable Long boardId){
+        return iBoard.getBoardColumns(boardId);
+    }
     @PostMapping
     public ResponseEntity<?> createBoard(@RequestBody BoardRequest request){
         return iBoard.createBoard(request);
+    }
+    @PatchMapping("{boardId}")
+    public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){
+        return iBoard.updateBoard(boardId, request);
     }
 }

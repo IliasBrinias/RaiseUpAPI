@@ -17,6 +17,7 @@ import java.util.List;
 public class TaskPresenter {
     private Long id;
     private String title;
+    private String description;
     private Long dueTo;
     private boolean completed;
     private StepPresenter step;
@@ -27,6 +28,7 @@ public class TaskPresenter {
         return TaskPresenter.builder()
                 .id(task.getId())
                 .title(task.getTitle())
+                .description(task.getDescription())
                 .dueTo(task.getDueTo())
                 .completed(task.isCompleted())
                 .users(UserPresenter.getPresenter(task.getUsers()))

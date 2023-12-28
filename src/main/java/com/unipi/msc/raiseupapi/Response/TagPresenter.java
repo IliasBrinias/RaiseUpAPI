@@ -23,6 +23,7 @@ public class TagPresenter {
                 .build();
     }
     public static List<TagPresenter> getPresenter(List<Tag> tags){
+        if (tags == null) return null;
         List<TagPresenter> presenters = new ArrayList<>();
         tags.forEach(tag -> presenters.add(getPresenter(tag)));
         return presenters;

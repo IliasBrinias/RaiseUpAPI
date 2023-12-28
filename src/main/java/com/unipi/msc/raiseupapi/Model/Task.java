@@ -17,6 +17,7 @@ public class Task {
     @GeneratedValue
     private Long id;
     private String title;
+    private String description;
     private Long dueTo;
     private Difficulty difficulty;
     private boolean completed;

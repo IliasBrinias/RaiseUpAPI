@@ -8,10 +8,7 @@ import com.unipi.msc.raiseupapi.Repository.BoardRepository;
 import com.unipi.msc.raiseupapi.Repository.StepRepository;
 import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Request.BoardRequest;
-import com.unipi.msc.raiseupapi.Response.BoardPresenter;
-import com.unipi.msc.raiseupapi.Response.GenericResponse;
-import com.unipi.msc.raiseupapi.Response.MultipleBoardPresenter;
-import com.unipi.msc.raiseupapi.Response.UserPresenter;
+import com.unipi.msc.raiseupapi.Response.*;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -86,6 +85,26 @@ public class BoardService implements IBoard {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
         List<UserPresenter> presenter = UserPresenter.getPresenter(board.getUsers());
+        return GenericResponse.builder().data(presenter).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> updateBoard(Long boardId, BoardRequest request) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+
+//        if ()
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> getBoardColumns(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+        List<StepPresenter> presenter = new ArrayList<>();
+        for (Step step:board.getSteps().stream().sorted(Comparator.comparingLong(Step::getPosition)).toList()){
+            presenter.add(StepPresenter.getPresenterWithoutTask(step));
+        }
         return GenericResponse.builder().data(presenter).build().success();
     }
 }
