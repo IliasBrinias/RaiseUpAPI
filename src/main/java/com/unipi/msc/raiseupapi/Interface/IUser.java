@@ -10,7 +10,7 @@ public interface IUser {
 
     ResponseEntity<?> getUserImage(Long userId);
 
-    ResponseEntity<?> searchUser(String keyword);
+    ResponseEntity<?> searchUser(Long boardId, String keyword);
 
     ResponseEntity<?> getUsers();
 }

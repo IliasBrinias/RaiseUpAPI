@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findAllByUsersIn(List<User> users);
+    List<Board> findAllByUsersInAndTitleContaining(List<User> users, String title);
 }

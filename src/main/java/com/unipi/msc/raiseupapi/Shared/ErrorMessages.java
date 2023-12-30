@@ -11,4 +11,5 @@ public class ErrorMessages {
     public static final String BOARD_NOT_FOUND = "BOARD_NOT_FOUND";
     public static final String TASK_NOT_FOUND = "TASK_NOT_FOUND";
     public static final String STEP_NOT_FOUND = "STEP_NOT_FOUND";
+    public static final String TITLE_IS_MANDATORY = "TITLE_IS_MANDATORY";
 }

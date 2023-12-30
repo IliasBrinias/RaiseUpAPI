@@ -14,4 +14,6 @@ public interface IBoard {
     ResponseEntity<?> updateBoard(Long boardId, BoardRequest request);
 
     ResponseEntity<?> getBoardColumns(Long boardId);
+
+    ResponseEntity<?> searchBoards(String keyword);
 }

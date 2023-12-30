@@ -2,24 +2,17 @@ package com.unipi.msc.raiseupapi.Service;
 
 import com.unipi.msc.raiseupapi.Interface.ITask;
 import com.unipi.msc.raiseupapi.Model.*;
-import com.unipi.msc.raiseupapi.Repository.StepRepository;
-import com.unipi.msc.raiseupapi.Repository.TagRepository;
-import com.unipi.msc.raiseupapi.Repository.TaskRepository;
-import com.unipi.msc.raiseupapi.Repository.UserRepository;
+import com.unipi.msc.raiseupapi.Repository.*;
 import com.unipi.msc.raiseupapi.Request.TaskRequest;
 import com.unipi.msc.raiseupapi.Response.GenericResponse;
-import com.unipi.msc.raiseupapi.Response.TagPresenter;
 import com.unipi.msc.raiseupapi.Response.TaskPresenter;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
-import jakarta.persistence.Column;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -29,19 +22,29 @@ public class TaskService implements ITask {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final StepRepository stepRepository;
+    private final CommentRepository commentRepository;
     @Override
-    public ResponseEntity<?> createTask(Long columnId, TaskRequest request) {
-        List<User> users = userRepository.findUsersByIdIn(request.getEmployeeIds()).orElse(null);
-        if (users == null){
-            return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+    public ResponseEntity<?> createTask(TaskRequest request) {
+        List<User> users = new ArrayList<>();
+        List<Tag> tags = new ArrayList<>();
+        if (request.getTitle() == null){
+            return GenericResponse.builder().message(ErrorMessages.TITLE_IS_MANDATORY).build().badRequest();
         }
-        List<Tag> tags = tagRepository.findByIdIn(request.getTagIds()).orElse(null);
-        if (tags == null){
-            return GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
+        if (request.getEmployeeIds() != null){
+            users = userRepository.findUsersByIdIn(request.getEmployeeIds()).orElse(null);
+            if (users == null){
+                return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+            }
         }
-        Step step = stepRepository.findById(columnId).orElse(null);
+        if (request.getTagIds() != null){
+            tags = tagRepository.findByIdIn(request.getTagIds()).orElse(null);
+            if (tags == null){
+                return GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
+            }
+        }
+        Step step = stepRepository.findById(request.getColumnId()).orElse(null);
         if (step == null){
-            return GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
+            return GenericResponse.builder().message(ErrorMessages.STEP_NOT_FOUND).build().badRequest();
         }
         Task task = taskRepository.save(Task.builder()
             .title(request.getTitle())
@@ -175,18 +178,19 @@ public class TaskService implements ITask {
             task = taskRepository.save(task);
         }
         if (request.getEmployeeIds()!=null){
-            List<User> users = userRepository.findUsersByIdIn(request.getEmployeeIds()).orElse(null);
-            if (users == null){
+            List<User> newUsers = userRepository.findUsersByIdIn(request.getEmployeeIds()).orElse(null);
+            if (newUsers == null){
                 return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
             }
-            task.setUsers(users);
-            task = taskRepository.save(task);
-            for (User user:users) {
-                if (!user.getTasks().contains(task)){
-                    user.getTasks().add(task);
-                    userRepository.save(user);
+            for (User user: task.getUsers()){
+                if (!newUsers.contains(user)){
+                    if (user.getTasks().remove(task)){
+                        userRepository.save(user);
+                    }
                 }
             }
+            task.setUsers(newUsers);
+            task = taskRepository.save(task);
         }
         if (request.getColumnId()!=null){
             Step step = stepRepository.findById(request.getColumnId()).orElse(null);
@@ -215,7 +219,41 @@ public class TaskService implements ITask {
 
     @Override
     public ResponseEntity<?> searchTask(String keyword) {
-        List<TagPresenter> presenter = TagPresenter.getPresenter(tagRepository.findAllByNameLike(keyword).orElse(null));
+        List<Task> tasks;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        if (keyword.isEmpty()){
+            tasks = taskRepository.findAllByUsersIn(users);
+        }else {
+            tasks = taskRepository.findAllByUsersInAndTitleContaining(users,keyword);
+        }
+        List<TaskPresenter> presenter = TaskPresenter.getPresenter(tasks);
         return GenericResponse.builder().data(presenter).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task == null){
+            return GenericResponse.builder().message(ErrorMessages.TASK_NOT_FOUND).build().badRequest();
+        }
+
+        for (User user : task.getUsers()){
+            if (user.getTasks().remove(task)){
+                userRepository.save(user);
+            }
+        }
+
+        for (Tag tag : task.getTags()){
+            if (tag.getTasks().remove(task)){
+                tagRepository.save(tag);
+            }
+        }
+
+        commentRepository.deleteAll(task.getComments());
+
+        taskRepository.delete(task);
+        return GenericResponse.builder().build().success();
     }
 }

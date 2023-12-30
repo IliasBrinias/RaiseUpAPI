@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -106,5 +105,20 @@ public class BoardService implements IBoard {
             presenter.add(StepPresenter.getPresenterWithoutTask(step));
         }
         return GenericResponse.builder().data(presenter).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> searchBoards(String keyword) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        List<Board> boards;
+        if (keyword.isEmpty()) {
+            boards = boardRepository.findAllByUsersIn(users);
+        }else{
+            boards = boardRepository.findAllByUsersInAndTitleContaining(users,keyword);
+        }
+        List<MultipleBoardPresenter> presenters = MultipleBoardPresenter.getPresenter(boards);
+        return GenericResponse.builder().data(presenters).build().success();
     }
 }

@@ -15,6 +15,10 @@ public class BoardController {
     public ResponseEntity<?> getBoards(){
         return iBoard.getBoards();
     }
+    @GetMapping("search")
+    public ResponseEntity<?> searchBoards(@RequestParam String keyword){
+        return iBoard.searchBoards(keyword);
+    }
     @GetMapping("{boardId}/employees")
     public ResponseEntity<?> getBoardEmployees(@PathVariable Long boardId){
         return iBoard.getBoardEmployees(boardId);

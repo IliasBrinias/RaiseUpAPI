@@ -25,8 +25,8 @@ public class UserController {
         return iUser.getUserImage(userId);
     }
     @GetMapping("search")
-    public ResponseEntity<?> searchUser(@RequestParam String keyword){
-        return iUser.searchUser(keyword);
+    public ResponseEntity<?> searchUser(@RequestParam Long boardId, @RequestParam String keyword){
+        return iUser.searchUser(boardId,keyword);
     }
     @PatchMapping
     public ResponseEntity<?> editUser(@ModelAttribute EditUserRequest request){

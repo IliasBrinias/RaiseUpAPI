@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ITask {
-    ResponseEntity<?> createTask(Long columnId, TaskRequest request);
+    ResponseEntity<?> createTask(TaskRequest request);
 
     ResponseEntity<?> getTask(Long taskId);
 
@@ -23,4 +23,6 @@ public interface ITask {
     ResponseEntity<?> editTask(Long taskId, TaskRequest request);
 
     ResponseEntity<?> searchTask(String keyword);
+
+    ResponseEntity<?> deleteTask(Long taskId);
 }

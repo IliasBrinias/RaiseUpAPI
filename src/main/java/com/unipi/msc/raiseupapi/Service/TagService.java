@@ -6,6 +6,7 @@ import com.unipi.msc.raiseupapi.Repository.TagRepository;
 import com.unipi.msc.raiseupapi.Request.TagRequest;
 import com.unipi.msc.raiseupapi.Response.GenericResponse;
 import com.unipi.msc.raiseupapi.Response.TagPresenter;
+import com.unipi.msc.raiseupapi.Response.TaskPresenter;
 import com.unipi.msc.raiseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +63,17 @@ public class TagService implements ITag {
         if (tag == null) return  GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
         tagRepository.delete(tag);
         return GenericResponse.builder().build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> searchTag(String keyword) {
+        List<Tag> tags;
+        if (keyword.isEmpty()){
+            tags = tagRepository.findAll();
+        }else {
+            tags = tagRepository.findAllByNameContaining(keyword);
+        }
+        List<TagPresenter> presenter = TagPresenter.getPresenter(tags);
+        return GenericResponse.builder().data(presenter).build().success();
     }
 }

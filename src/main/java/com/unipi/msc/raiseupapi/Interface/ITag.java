@@ -10,4 +10,6 @@ public interface ITag {
 
     ResponseEntity<?> editTag(Long tagId, TagRequest request);
     ResponseEntity<?> deleteTag(Long tagId);
+
+    ResponseEntity<?> searchTag(String keyword);
 }

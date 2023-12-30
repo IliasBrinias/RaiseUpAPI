@@ -1,8 +1,10 @@
 package com.unipi.msc.raiseupapi.Service;
 
 import com.unipi.msc.raiseupapi.Interface.IUser;
+import com.unipi.msc.raiseupapi.Model.Board;
 import com.unipi.msc.raiseupapi.Model.Image;
 import com.unipi.msc.raiseupapi.Model.User;
+import com.unipi.msc.raiseupapi.Repository.BoardRepository;
 import com.unipi.msc.raiseupapi.Repository.ImageRepository;
 import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Request.EditUserRequest;
@@ -35,6 +37,7 @@ public class UserService implements IUser {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageRepository imageRepository;
+    private final BoardRepository boardRepository;
 
     @Override
     public ResponseEntity<?> getUser() {
@@ -73,14 +76,24 @@ public class UserService implements IUser {
     }
 
     @Override
-    public ResponseEntity<?> searchUser(String keyword) {
+    public ResponseEntity<?> searchUser(Long boardId, String keyword) {
         List<User> userList;
+        List<UserPresenter> presenters = new ArrayList<>();
         if (keyword.isEmpty()){
             userList = userRepository.findAll();
         }else{
-            userList = userRepository.findUsersByUsernameLikeOrEmailLikeOrFirstNameLikeOrLastNameLike(keyword,keyword,keyword,keyword).orElse(new ArrayList<>());
+            userList = userRepository.findUsersByUsernameContainingOrEmailContainingOrFirstNameContainingOrLastNameContaining(keyword,keyword,keyword,keyword);
         }
-        return GenericResponse.builder().data(UserPresenter.getPresenter(userList)).build().success();
+        if (boardId!=0L){
+            Board board = boardRepository.findById(boardId).orElse(null);
+            if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+            for (User user:userList){
+                if (user.getBoards().contains(board)) presenters.add(UserPresenter.getPresenter(user));
+            }
+        }else {
+            presenters = UserPresenter.getPresenter(userList);
+        }
+        return GenericResponse.builder().data(presenters).build().success();
     }
 
     @Override
