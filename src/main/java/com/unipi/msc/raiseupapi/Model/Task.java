@@ -22,7 +22,6 @@ public class Task {
     private Difficulty difficulty;
     private boolean completed;
     @ManyToOne
-    @JoinColumn(name = "step_id")
     private Step step;
     @ManyToMany(mappedBy = "tasks")
     private List<User> users = new ArrayList<>();

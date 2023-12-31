@@ -31,12 +31,12 @@ public class BoardController {
     public ResponseEntity<?> getBoardColumns(@PathVariable Long boardId){
         return iBoard.getBoardColumns(boardId);
     }
-    @PostMapping
-    public ResponseEntity<?> createBoard(@RequestBody BoardRequest request){
-        return iBoard.createBoard(request);
-    }
     @PatchMapping("{boardId}")
     public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){
         return iBoard.updateBoard(boardId, request);
+    }
+    @PostMapping
+    public ResponseEntity<?> createBoard(@RequestBody BoardRequest request){
+        return iBoard.createBoard(request);
     }
 }

@@ -191,6 +191,12 @@ public class TaskService implements ITask {
             }
             task.setUsers(newUsers);
             task = taskRepository.save(task);
+            for (User user: newUsers){
+                if (!user.getTasks().contains(task)){
+                    user.getTasks().add(task);
+                    user = userRepository.save(user);
+                }
+            }
         }
         if (request.getColumnId()!=null){
             Step step = stepRepository.findById(request.getColumnId()).orElse(null);

@@ -31,19 +31,19 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String fcmId;
-
     @OneToOne
     private Image image;
-
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Board> boards = new ArrayList<>();
-
+    @OneToMany(mappedBy = "owner")
+    private List<Board> ownedBoards = new ArrayList<>();
     @Column(insertable=false, updatable=false)
     @Enumerated(EnumType.STRING)
     @NonNull
     private Role role;
     @ManyToMany
     private List<Task> tasks = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

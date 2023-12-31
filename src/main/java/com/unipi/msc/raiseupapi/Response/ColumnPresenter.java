@@ -10,26 +10,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StepPresenter {
+public class ColumnPresenter {
     private Long id;
     private String title;
     private Long boardId;
     private List<TaskPresenter> tasks = new ArrayList<>();
-    public static List<StepPresenter> getPresenter(List<Step> steps) {
-        List<StepPresenter> presenters = new ArrayList<>();
+    public static List<ColumnPresenter> getPresenter(List<Step> steps) {
+        List<ColumnPresenter> presenters = new ArrayList<>();
         steps.forEach(step -> presenters.add(getPresenter(step)));
         return presenters;
     }
-    public static StepPresenter getPresenter(Step step){
-        return StepPresenter.builder()
+    public static ColumnPresenter getPresenter(Step step){
+        return ColumnPresenter.builder()
                 .id(step.getId())
                 .title(step.getTitle())
                 .boardId(step.getBoard().getId())
                 .tasks(TaskPresenter.getPresenter(step.getTasks()))
                 .build();
     }
-    public static StepPresenter getPresenterWithoutTask(Step step){
-        return StepPresenter.builder()
+    public static ColumnPresenter getPresenterWithoutTask(Step step){
+        return ColumnPresenter.builder()
                 .id(step.getId())
                 .boardId(step.getBoard().getId())
                 .title(step.getTitle())

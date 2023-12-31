@@ -20,7 +20,6 @@ public class Step {
     private Long position;
     @OneToMany(mappedBy = "step", orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;

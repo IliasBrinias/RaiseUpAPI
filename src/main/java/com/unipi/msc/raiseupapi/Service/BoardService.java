@@ -3,9 +3,11 @@ package com.unipi.msc.raiseupapi.Service;
 import com.unipi.msc.raiseupapi.Interface.IBoard;
 import com.unipi.msc.raiseupapi.Model.Board;
 import com.unipi.msc.raiseupapi.Model.Step;
+import com.unipi.msc.raiseupapi.Model.Task;
 import com.unipi.msc.raiseupapi.Model.User;
 import com.unipi.msc.raiseupapi.Repository.BoardRepository;
 import com.unipi.msc.raiseupapi.Repository.StepRepository;
+import com.unipi.msc.raiseupapi.Repository.TaskRepository;
 import com.unipi.msc.raiseupapi.Repository.UserRepository;
 import com.unipi.msc.raiseupapi.Request.BoardRequest;
 import com.unipi.msc.raiseupapi.Response.*;
@@ -26,26 +28,25 @@ public class BoardService implements IBoard {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final StepRepository stepRepository;
-
+    private final TaskRepository taskRepository;
     @Override
     public ResponseEntity<?> getBoards() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<User> users = new ArrayList<>();
         users.add(user);
-        List<Board> boards = boardRepository.findAllByUsersIn(users);
-        List<MultipleBoardPresenter> presenters = MultipleBoardPresenter.getPresenter(boards);
+        List<Board> boards = boardRepository.findAllByUsersInOrOwner(users,user);
+        List<BoardPresenter> presenters = BoardPresenter.getPresenterWithoutSteps(boards);
         return GenericResponse.builder().data(presenters).build().success();
     }
-
     @Override
     public ResponseEntity<?> getBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) return GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
         return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
     }
-
     @Override
     public ResponseEntity<?> createBoard(BoardRequest request) {
+        User owner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<User> users = userRepository.findUsersByIdIn(request.getEmployeesId()).orElse(null);
         if (users == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
         if (request.getColumns() == null) return GenericResponse.builder().message(ErrorMessages.NO_COLUMNS_FOUND).build().badRequest();
@@ -64,9 +65,10 @@ public class BoardService implements IBoard {
                 .date(new Date().getTime())
                 .steps(steps)
                 .users(users)
+                .owner(owner)
                 .build());
 
-        steps.forEach( step -> {
+        steps.forEach(step -> {
             step.setBoard(board);
             stepRepository.save(step);
         });
@@ -78,7 +80,6 @@ public class BoardService implements IBoard {
 
         return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
     }
-
     @Override
     public ResponseEntity<?> getBoardEmployees(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
@@ -86,27 +87,59 @@ public class BoardService implements IBoard {
         List<UserPresenter> presenter = UserPresenter.getPresenter(board.getUsers());
         return GenericResponse.builder().data(presenter).build().success();
     }
-
     @Override
     public ResponseEntity<?> updateBoard(Long boardId, BoardRequest request) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+        if (request.getTitle()!=null) {
+            board.setTitle(request.getTitle());
+            board = boardRepository.save(board);
+        }
+        if (request.getEmployeesId()!=null){
+            List<User> newUsers = userRepository.findUsersByIdIn(request.getEmployeesId()).orElse(null);
+            if (newUsers == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+            for (User user: board.getUsers()){
+                if (!newUsers.contains(user)){
+                    // remove Employee from Tasks
+                    List<Task> userTaskForRemove = new ArrayList<>();
+                    for (Task task:user.getTasks()){
+                        if (task.getStep().getBoard() == board){
+                            task.getUsers().remove(user);
+                            task = taskRepository.save(task);
+                            userTaskForRemove.add(task);
+                        }
+                    }
+                    if (!userTaskForRemove.isEmpty()) {
+                        user.getTasks().removeAll(userTaskForRemove);
+                        user = userRepository.save(user);
+                    }
 
-//        if ()
-        return null;
+                    // remove Employee from Board
+                    user.getBoards().remove(board);
+                    userRepository.save(user);
+                }
+            }
+            board.setUsers(newUsers);
+            board = boardRepository.save(board);
+            for (User user:newUsers){
+                if (!user.getBoards().contains(board)){
+                    user.getBoards().add(board);
+                    userRepository.save(user);
+                }
+            }
+        }
+        return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
     }
-
     @Override
     public ResponseEntity<?> getBoardColumns(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
-        List<StepPresenter> presenter = new ArrayList<>();
-        for (Step step:board.getSteps().stream().sorted(Comparator.comparingLong(Step::getPosition)).toList()){
-            presenter.add(StepPresenter.getPresenterWithoutTask(step));
+        List<ColumnPresenter> presenter = new ArrayList<>();
+        for (Step step :board.getSteps().stream().sorted(Comparator.comparingLong(Step::getPosition)).toList()){
+            presenter.add(ColumnPresenter.getPresenterWithoutTask(step));
         }
         return GenericResponse.builder().data(presenter).build().success();
     }
-
     @Override
     public ResponseEntity<?> searchBoards(String keyword) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -114,11 +147,11 @@ public class BoardService implements IBoard {
         users.add(user);
         List<Board> boards;
         if (keyword.isEmpty()) {
-            boards = boardRepository.findAllByUsersIn(users);
+            boards = boardRepository.findAllByUsersInOrOwner(users,user);
         }else{
             boards = boardRepository.findAllByUsersInAndTitleContaining(users,keyword);
         }
-        List<MultipleBoardPresenter> presenters = MultipleBoardPresenter.getPresenter(boards);
+        List<BoardPresenter> presenters = BoardPresenter.getPresenterWithoutSteps(boards);
         return GenericResponse.builder().data(presenters).build().success();
     }
 }

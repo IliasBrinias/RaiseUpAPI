@@ -18,10 +18,11 @@ public class Board {
     private Long id;
     private String title;
     private Long date;
-
     @OneToMany(mappedBy = "board", orphanRemoval = true)
     private List<Step> steps = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards")
     private List<User> users = new ArrayList<>();
+    @ManyToOne
+    private User owner;
 }
