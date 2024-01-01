@@ -25,8 +25,6 @@ public class Task {
     private Step step;
     @ManyToMany(mappedBy = "tasks")
     private List<User> users = new ArrayList<>();
-    @OneToMany(mappedBy = "task", orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
     @ManyToMany
     private List<Tag> tags = new ArrayList<>();
 }

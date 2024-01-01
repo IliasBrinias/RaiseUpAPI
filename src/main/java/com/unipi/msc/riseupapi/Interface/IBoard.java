@@ -1,6 +1,7 @@
 package com.unipi.msc.riseupapi.Interface;
 
 import com.unipi.msc.riseupapi.Request.BoardRequest;
+import com.unipi.msc.riseupapi.Request.ColumnRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface IBoard {
@@ -13,7 +14,9 @@ public interface IBoard {
 
     ResponseEntity<?> updateBoard(Long boardId, BoardRequest request);
 
-    ResponseEntity<?> getBoardColumns(Long boardId);
+    ResponseEntity<?> getBoardSteps(Long boardId);
 
     ResponseEntity<?> searchBoards(String keyword);
+
+    ResponseEntity<?> addBoardStep(Long boardId, ColumnRequest request);
 }

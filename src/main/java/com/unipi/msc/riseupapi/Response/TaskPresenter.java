@@ -19,7 +19,6 @@ public class TaskPresenter {
     private boolean completed;
     private ColumnPresenter step;
     private List<UserPresenter> users = new ArrayList<>();
-    private List<CommentPresenter> comments = new ArrayList<>();
     private List<TagPresenter> tags = new ArrayList<>();
     public static TaskPresenter getPresenter(Task task){
         return TaskPresenter.builder()
@@ -29,7 +28,6 @@ public class TaskPresenter {
                 .dueTo(task.getDueTo())
                 .completed(task.isCompleted())
                 .users(UserPresenter.getPresenter(task.getUsers()))
-                .comments(CommentPresenter.getPresenter(task.getComments()))
                 .tags(TagPresenter.getPresenter(task.getTags()))
                 .step(ColumnPresenter.getPresenterWithoutTask(task.getStep()))
                 .build();

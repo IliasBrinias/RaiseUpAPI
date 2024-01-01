@@ -14,6 +14,10 @@ public class StepController {
     private final IStep iStep;
     @PatchMapping("{stepId}")
     public ResponseEntity<?> editTag(@PathVariable Long stepId, @RequestBody ColumnRequest request){
-        return iStep.editTag(stepId,request);
+        return iStep.editStep(stepId,request);
+    }
+    @DeleteMapping("{stepId}")
+    public ResponseEntity<?> deleteTag(@PathVariable Long stepId){
+        return iStep.deleteStep(stepId);
     }
 }

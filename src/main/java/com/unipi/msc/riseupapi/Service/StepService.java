@@ -1,12 +1,14 @@
 package com.unipi.msc.riseupapi.Service;
 
 import com.unipi.msc.riseupapi.Interface.IStep;
-import com.unipi.msc.riseupapi.Model.Step;
-import com.unipi.msc.riseupapi.Repository.StepRepository;
+import com.unipi.msc.riseupapi.Interface.ITask;
+import com.unipi.msc.riseupapi.Model.*;
+import com.unipi.msc.riseupapi.Repository.*;
 import com.unipi.msc.riseupapi.Request.ColumnRequest;
 import com.unipi.msc.riseupapi.Response.BoardPresenter;
 import com.unipi.msc.riseupapi.Response.GenericResponse;
 import com.unipi.msc.riseupapi.Shared.ErrorMessages;
+import com.unipi.msc.riseupapi.Shared.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -16,9 +18,10 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class StepService implements IStep {
+    private final ITask iTask;
     private final StepRepository stepRepository;
     @Override
-    public ResponseEntity<?> editTag(Long columnId, ColumnRequest request) {
+    public ResponseEntity<?> editStep(Long columnId, ColumnRequest request) {
         Step step = stepRepository.findById(columnId).orElse(null);
         if (step == null) return GenericResponse.builder().message(ErrorMessages.STEP_NOT_FOUND).build().badRequest();
         if (request.getTitle()!=null){
@@ -49,5 +52,24 @@ public class StepService implements IStep {
         }
         BoardPresenter presenter = BoardPresenter.getPresenter(step.getBoard());
         return GenericResponse.builder().data(presenter).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> deleteStep(Long stepId) {
+        Step step = stepRepository.findById(stepId).orElse(null);
+        if (step == null) return GenericResponse.builder().message(ErrorMessages.STEP_NOT_FOUND).build().badRequest();
+//        //delete Tasks
+        for (Task task : step.getTasks()){
+            ResponseEntity<?> responseEntity = iTask.deleteTask(task.getId());
+            if (((GenericResponse<?>)responseEntity.getBody()).getCode() != Tags.HTTP_OK) {
+                return responseEntity;
+            }
+        }
+        step.getTasks().clear();
+        step = stepRepository.save(step);
+
+        stepRepository.delete(step);
+
+        return GenericResponse.builder().build().success();
     }
 }

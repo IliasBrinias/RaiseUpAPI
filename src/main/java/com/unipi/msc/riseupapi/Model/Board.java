@@ -18,7 +18,7 @@ public class Board {
     private Long id;
     private String title;
     private Long date;
-    @OneToMany(mappedBy = "board", orphanRemoval = true)
+    @OneToMany(mappedBy = "board")
     private List<Step> steps = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards")

@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -88,7 +89,9 @@ public class UserService implements IUser {
             Board board = boardRepository.findById(boardId).orElse(null);
             if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
             for (User user:userList){
-                if (user.getBoards().contains(board)) presenters.add(UserPresenter.getPresenter(user));
+                if (user.getBoards().contains(board) && !Objects.equals(user.getId(), board.getOwner().getId())) {
+                    presenters.add(UserPresenter.getPresenter(user));
+                }
             }
         }else {
             presenters = UserPresenter.getPresenter(userList);

@@ -2,6 +2,7 @@ package com.unipi.msc.riseupapi.Controller;
 
 import com.unipi.msc.riseupapi.Interface.IBoard;
 import com.unipi.msc.riseupapi.Request.BoardRequest;
+import com.unipi.msc.riseupapi.Request.ColumnRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +28,20 @@ public class BoardController {
     public ResponseEntity<?> getBoard(@PathVariable Long boardId){
         return iBoard.getBoard(boardId);
     }
-    @GetMapping("{boardId}/columns")
-    public ResponseEntity<?> getBoardColumns(@PathVariable Long boardId){
-        return iBoard.getBoardColumns(boardId);
+    @GetMapping("{boardId}/steps")
+    public ResponseEntity<?> getBoardSteps(@PathVariable Long boardId){
+        return iBoard.getBoardSteps(boardId);
     }
-    @PatchMapping("{boardId}")
-    public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){
-        return iBoard.updateBoard(boardId, request);
+    @PostMapping("{boardId}/steps")
+    public ResponseEntity<?> addBoardStep(@PathVariable Long boardId,@RequestBody ColumnRequest request){
+        return iBoard.addBoardStep(boardId,request);
     }
     @PostMapping
     public ResponseEntity<?> createBoard(@RequestBody BoardRequest request){
         return iBoard.createBoard(request);
+    }
+    @PatchMapping("{boardId}")
+    public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){
+        return iBoard.updateBoard(boardId, request);
     }
 }

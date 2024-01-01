@@ -10,6 +10,7 @@ import com.unipi.msc.riseupapi.Repository.StepRepository;
 import com.unipi.msc.riseupapi.Repository.TaskRepository;
 import com.unipi.msc.riseupapi.Repository.UserRepository;
 import com.unipi.msc.riseupapi.Request.BoardRequest;
+import com.unipi.msc.riseupapi.Request.ColumnRequest;
 import com.unipi.msc.riseupapi.Response.*;
 import com.unipi.msc.riseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
@@ -131,7 +132,7 @@ public class BoardService implements IBoard {
         return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
     }
     @Override
-    public ResponseEntity<?> getBoardColumns(Long boardId) {
+    public ResponseEntity<?> getBoardSteps(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
         List<ColumnPresenter> presenter = new ArrayList<>();
@@ -153,5 +154,26 @@ public class BoardService implements IBoard {
         }
         List<BoardPresenter> presenters = BoardPresenter.getPresenterWithoutSteps(boards);
         return GenericResponse.builder().data(presenters).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> addBoardStep(Long boardId, ColumnRequest request) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+        long position;
+        if (request.getPosition() != null){
+            position = request.getPosition();
+        }else{
+            position = board.getSteps().stream().map(Step::getPosition).max(Long::compareTo).orElse(-1L) + 1;
+        }
+        Step step = stepRepository.save(Step.builder()
+                .title(request.getTitle())
+                .position(position)
+                .build());
+        board.getSteps().add(step);
+        board = boardRepository.save(board);
+        step.setBoard(board);
+        stepRepository.save(step);
+        return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
     }
 }

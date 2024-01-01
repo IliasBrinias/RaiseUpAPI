@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -22,7 +23,6 @@ public class TaskService implements ITask {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final StepRepository stepRepository;
-    private final CommentRepository commentRepository;
     @Override
     public ResponseEntity<?> createTask(TaskRequest request) {
         List<User> users = new ArrayList<>();
@@ -214,8 +214,11 @@ public class TaskService implements ITask {
             if (request.getTitle()!=null) task.setTitle(request.getTitle());
             if (request.getDescription()!=null) task.setDescription(request.getDescription());
             if (request.getDueTo()!=null) task.setDueTo(request.getDueTo());
-            if (request.getCompleted()!=null) task.setCompleted(request.getCompleted());
             if (request.getDifficulty()!=null) task.setDifficulty(request.getDifficulty());
+            if (request.getCompleted()!=null) {
+                task.setDueTo(new Date().getTime());
+                task.setCompleted(request.getCompleted());
+            }
             task = taskRepository.save(task);
         }
 
@@ -256,8 +259,6 @@ public class TaskService implements ITask {
                 tagRepository.save(tag);
             }
         }
-
-        commentRepository.deleteAll(task.getComments());
 
         taskRepository.delete(task);
         return GenericResponse.builder().build().success();
