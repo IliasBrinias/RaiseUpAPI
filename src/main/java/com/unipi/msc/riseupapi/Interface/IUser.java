@@ -1,6 +1,7 @@
 package com.unipi.msc.riseupapi.Interface;
 
 import com.unipi.msc.riseupapi.Request.EditUserRequest;
+import com.unipi.msc.riseupapi.Request.FCMRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface IUser {
@@ -13,4 +14,6 @@ public interface IUser {
     ResponseEntity<?> searchUser(Long boardId, String keyword);
 
     ResponseEntity<?> getUsers();
+
+    ResponseEntity<?> updateUserFCM(FCMRequest request);
 }

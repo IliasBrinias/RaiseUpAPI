@@ -8,6 +8,7 @@ import com.unipi.msc.riseupapi.Repository.BoardRepository;
 import com.unipi.msc.riseupapi.Repository.ImageRepository;
 import com.unipi.msc.riseupapi.Repository.UserRepository;
 import com.unipi.msc.riseupapi.Request.EditUserRequest;
+import com.unipi.msc.riseupapi.Request.FCMRequest;
 import com.unipi.msc.riseupapi.Response.GenericResponse;
 import com.unipi.msc.riseupapi.Response.UserPresenter;
 import com.unipi.msc.riseupapi.Shared.ErrorMessages;
@@ -39,13 +40,11 @@ public class UserService implements IUser {
     private final PasswordEncoder passwordEncoder;
     private final ImageRepository imageRepository;
     private final BoardRepository boardRepository;
-
     @Override
     public ResponseEntity<?> getUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return GenericResponse.builder().data(UserPresenter.getPresenter(user)).build().success();
     }
-
     @Override
     public ResponseEntity<?> editUser(EditUserRequest request) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -60,7 +59,6 @@ public class UserService implements IUser {
         user = userRepository.save(user);
         return GenericResponse.builder().data(UserPresenter.getPresenter(user)).build().success();
     }
-
     @Override
     public ResponseEntity<?> getUserImage(Long userId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -75,7 +73,6 @@ public class UserService implements IUser {
             return ResponseEntity.badRequest().build();
         }
     }
-
     @Override
     public ResponseEntity<?> searchUser(Long boardId, String keyword) {
         List<User> userList;
@@ -98,13 +95,19 @@ public class UserService implements IUser {
         }
         return GenericResponse.builder().data(presenters).build().success();
     }
-
     @Override
     public ResponseEntity<?> getUsers() {
         List<UserPresenter> users = UserPresenter.getPresenter(userRepository.findAll());
         return GenericResponse.builder().data(users).build().success();
     }
-
+    @Override
+    public ResponseEntity<?> updateUserFCM(FCMRequest request) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.setFcmId(request.getToken());
+        user = userRepository.save(user);
+        UserPresenter presenter = UserPresenter.getPresenter(user);
+        return GenericResponse.builder().data(presenter).build().success();
+    }
     private Image saveFile(MultipartFile multipartFile, String fileName){
 
         Path dirPath = getDirPath();

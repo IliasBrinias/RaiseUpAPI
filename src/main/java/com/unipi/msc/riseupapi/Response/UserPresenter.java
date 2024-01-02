@@ -25,6 +25,7 @@ public class UserPresenter {
     private String profile;
 
     public static UserPresenter getPresenter(User u){
+        if (u == null) return null;
         UserPresenter userPresenter = UserPresenter.builder()
                 .id(u.getId())
                 .email(u.getEmail())

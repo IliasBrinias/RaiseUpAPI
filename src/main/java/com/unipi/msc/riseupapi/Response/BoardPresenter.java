@@ -19,7 +19,7 @@ public class BoardPresenter {
     private List<ColumnPresenter> steps = new ArrayList<>();
     private List<UserPresenter> users = new ArrayList<>();
     private Long totalTasks;
-    private Long ownerId;
+    private UserPresenter owner;
     public static BoardPresenter getPresenter(Board board){
         BoardPresenter presenter = BoardPresenter.builder()
                 .id(board.getId())
@@ -27,7 +27,7 @@ public class BoardPresenter {
                 .date(board.getDate())
                 .steps(ColumnPresenter.getPresenter(board.getSteps()))
                 .users(UserPresenter.getPresenter(board.getUsers()))
-                .ownerId(board.getOwner() != null ? board.getOwner().getId() : null)
+                .owner(board.getOwner() != null ? UserPresenter.getPresenter(board.getOwner()) : null)
                 .build();
         AtomicReference<Long> totalTasks = new AtomicReference<>(0L);
         board.getSteps().forEach(column-> {
@@ -43,7 +43,7 @@ public class BoardPresenter {
                 .title(board.getTitle())
                 .date(board.getDate())
                 .users(UserPresenter.getPresenter(board.getUsers()))
-                .ownerId(board.getOwner() !=null?board.getOwner().getId():null)
+                .owner(UserPresenter.getPresenter(board.getOwner()))
                 .build();
         AtomicReference<Long> totalTasks = new AtomicReference<>(0L);
         board.getSteps().forEach(column-> totalTasks.updateAndGet(v -> v + column.getTasks().size()));

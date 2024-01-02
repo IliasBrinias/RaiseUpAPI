@@ -2,6 +2,7 @@ package com.unipi.msc.riseupapi.Controller;
 
 import com.unipi.msc.riseupapi.Interface.IUser;
 import com.unipi.msc.riseupapi.Request.EditUserRequest;
+import com.unipi.msc.riseupapi.Request.FCMRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,9 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<?> editUser(@ModelAttribute EditUserRequest request){
         return iUser.editUser(request);
+    }
+    @PatchMapping("fcm")
+    public ResponseEntity<?> editUserFCM(@RequestBody FCMRequest request){
+        return iUser.updateUserFCM(request);
     }
 }
