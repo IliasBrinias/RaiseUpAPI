@@ -1,5 +1,6 @@
 package com.unipi.msc.riseupapi.Response;
 
+import com.unipi.msc.riseupapi.Shared.ErrorMessages;
 import com.unipi.msc.riseupapi.Shared.Tags;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,12 @@ public class GenericResponse<T> {
         this.message = Tags.ACCESS_DENIED;
         return ResponseEntity.badRequest().body(this);
     }
+    public ResponseEntity<?> internalServerError(){
+        this.code = Tags.INTERNAL_ERROR;
+        this.message = ErrorMessages.PLEASE_TRY_AGAIN_LATER;
+        return ResponseEntity.badRequest().body(this);
+    }
+
     public ResponseEntity<?> response(){
         return ResponseEntity.badRequest().body(this);
     }

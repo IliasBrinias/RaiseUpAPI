@@ -12,4 +12,6 @@ public class ErrorMessages {
     public static final String TASK_NOT_FOUND = "TASK_NOT_FOUND";
     public static final String STEP_NOT_FOUND = "STEP_NOT_FOUND";
     public static final String TITLE_IS_MANDATORY = "TITLE_IS_MANDATORY";
+    public static final String COMPLETE_THE_MANDATORY_FIELDS = "COMPLETE_THE_MANDATORY_FIELDS";
+    public static final String PLEASE_TRY_AGAIN_LATER = "PLEASE_TRY_AGAIN_LATER";
 }
