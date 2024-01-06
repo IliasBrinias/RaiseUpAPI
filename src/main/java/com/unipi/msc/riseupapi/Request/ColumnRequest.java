@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ColumnRequest {
+    private Long id;
     private String title;
     private Long position;
 }

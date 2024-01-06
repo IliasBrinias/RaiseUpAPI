@@ -1,6 +1,7 @@
 package com.unipi.msc.riseupapi.Service;
 
 import com.unipi.msc.riseupapi.Interface.IBoard;
+import com.unipi.msc.riseupapi.Interface.IStep;
 import com.unipi.msc.riseupapi.Model.Board;
 import com.unipi.msc.riseupapi.Model.Step;
 import com.unipi.msc.riseupapi.Model.Task;
@@ -30,6 +31,7 @@ public class BoardService implements IBoard {
     private final UserRepository userRepository;
     private final StepRepository stepRepository;
     private final TaskRepository taskRepository;
+    private final IStep iStep;
     @Override
     public ResponseEntity<?> getBoards() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -175,5 +177,42 @@ public class BoardService implements IBoard {
         step.setBoard(board);
         stepRepository.save(step);
         return GenericResponse.builder().data(BoardPresenter.getPresenter(board)).build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+
+        for (Step step : board.getSteps()) {
+            ResponseEntity<?> response = iStep.deleteStep(step.getId());
+            if (response.getStatusCode().value() != 200) return response;
+        }
+        board.getSteps().clear();
+        board = boardRepository.save(board);
+
+        for (User user:board.getUsers()){
+            user.getBoards().remove(board);
+            userRepository.save(user);
+        }
+        board.getUsers().clear();
+        board = boardRepository.save(board);
+
+        boardRepository.delete(board);
+
+        return GenericResponse.builder().build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> changeColumnOrder(Long boardId, List<ColumnRequest> request) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) return  GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
+        board.getSteps().forEach(step -> {
+            ColumnRequest columnRequest = request.stream().filter(cr -> cr.getId().equals(step.getId())).findFirst().orElse(null);
+            if (columnRequest == null) return;
+            step.setPosition(columnRequest.getPosition());
+            stepRepository.save(step);
+        });
+        return GenericResponse.builder().build().success();
     }
 }

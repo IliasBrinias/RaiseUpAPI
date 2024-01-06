@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("board")
 @RequiredArgsConstructor
@@ -33,15 +35,16 @@ public class BoardController {
         return iBoard.getBoardSteps(boardId);
     }
     @PostMapping("{boardId}/steps")
-    public ResponseEntity<?> addBoardStep(@PathVariable Long boardId,@RequestBody ColumnRequest request){
-        return iBoard.addBoardStep(boardId,request);
-    }
+    public ResponseEntity<?> addBoardStep(@PathVariable Long boardId,@RequestBody ColumnRequest request){return iBoard.addBoardStep(boardId,request);}
     @PostMapping
     public ResponseEntity<?> createBoard(@RequestBody BoardRequest request){
         return iBoard.createBoard(request);
     }
     @PatchMapping("{boardId}")
-    public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){
-        return iBoard.updateBoard(boardId, request);
-    }
+    public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequest request){return iBoard.updateBoard(boardId, request);}
+    @PatchMapping("{boardId}/column-order")
+    public ResponseEntity<?> changeColumnOrder(@PathVariable Long boardId, @RequestBody List<ColumnRequest> request){return iBoard.changeColumnOrder(boardId, request);}
+
+    @DeleteMapping("{boardId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable Long boardId){return iBoard.deleteBoard(boardId);}
 }

@@ -249,16 +249,22 @@ public class TaskService implements ITask {
         }
 
         for (User user : task.getUsers()){
-            if (user.getTasks().remove(task)){
-                userRepository.save(user);
-            }
+            user.getTasks().remove(task);
+            userRepository.save(user);
         }
 
+        task.getUsers().clear();
+        task = taskRepository.save(task);
+
         for (Tag tag : task.getTags()){
-            if (tag.getTasks().remove(task)){
-                tagRepository.save(tag);
-            }
+            tag.getTasks().remove(task);
+            tagRepository.save(tag);
         }
+        task.getTags().clear();
+        task = taskRepository.save(task);
+
+        task.setStep(null);
+        task = taskRepository.save(task);
 
         taskRepository.delete(task);
         return GenericResponse.builder().build().success();

@@ -59,7 +59,8 @@ public class StepService implements IStep {
         Step step = stepRepository.findById(stepId).orElse(null);
         if (step == null) return GenericResponse.builder().message(ErrorMessages.STEP_NOT_FOUND).build().badRequest();
 //        //delete Tasks
-        for (Task task : step.getTasks()){
+        List<Task> tasks = step.getTasks();
+        for (Task task : tasks){
             ResponseEntity<?> responseEntity = iTask.deleteTask(task.getId());
             if (((GenericResponse<?>)responseEntity.getBody()).getCode() != Tags.HTTP_OK) {
                 return responseEntity;

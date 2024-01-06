@@ -4,6 +4,8 @@ import com.unipi.msc.riseupapi.Request.BoardRequest;
 import com.unipi.msc.riseupapi.Request.ColumnRequest;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface IBoard {
     ResponseEntity<?> getBoards();
     ResponseEntity<?> getBoard(Long boardId);
@@ -19,4 +21,8 @@ public interface IBoard {
     ResponseEntity<?> searchBoards(String keyword);
 
     ResponseEntity<?> addBoardStep(Long boardId, ColumnRequest request);
+
+    ResponseEntity<?> deleteBoard(Long boardId);
+
+    ResponseEntity<?> changeColumnOrder(Long boardId, List<ColumnRequest> request);
 }

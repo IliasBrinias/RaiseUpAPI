@@ -18,7 +18,7 @@ public class Step {
     private Long id;
     private String title;
     private Long position;
-    @OneToMany(mappedBy = "step", orphanRemoval = true)
+    @OneToMany(mappedBy = "step")
     private List<Task> tasks = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "board_id")

@@ -24,7 +24,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/auth/createAdmin/**").authenticated()
                     .requestMatchers("/auth/register", "/auth/login").permitAll()
                     .anyRequest().authenticated())
-                .httpBasic(httpBasic->httpBasic.authenticationEntryPoint(point))
+                .exceptionHandling(ex->ex.authenticationEntryPoint(point))
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();

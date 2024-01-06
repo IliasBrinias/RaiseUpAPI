@@ -1,11 +1,14 @@
 package com.unipi.msc.riseupapi.Response;
 
 import com.unipi.msc.riseupapi.Model.Board;
+import com.unipi.msc.riseupapi.Model.Step;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -21,11 +24,12 @@ public class BoardPresenter {
     private Long totalTasks;
     private UserPresenter owner;
     public static BoardPresenter getPresenter(Board board){
+        List<Step> sortedSteps = board.getSteps().stream().sorted(Comparator.comparingLong(Step::getPosition)).collect(Collectors.toList());
         BoardPresenter presenter = BoardPresenter.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .date(board.getDate())
-                .steps(ColumnPresenter.getPresenter(board.getSteps()))
+                .steps(ColumnPresenter.getPresenter(sortedSteps))
                 .users(UserPresenter.getPresenter(board.getUsers()))
                 .owner(board.getOwner() != null ? UserPresenter.getPresenter(board.getOwner()) : null)
                 .build();

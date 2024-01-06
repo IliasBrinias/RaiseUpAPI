@@ -25,6 +25,6 @@ public class Task {
     private Step step;
     @ManyToMany(mappedBy = "tasks")
     private List<User> users = new ArrayList<>();
-    @ManyToMany
+    @ManyToMany(mappedBy = "tasks")
     private List<Tag> tags = new ArrayList<>();
 }
