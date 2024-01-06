@@ -12,19 +12,16 @@ public class GenericResponse<T> {
     private int code;
     private String message;
     private T data;
-
     public ResponseEntity<?> success(){
         this.code = Tags.HTTP_OK;
         return ResponseEntity.ok(this);
     }
-
     public ResponseEntity<?> badRequest(){
         this.code = Tags.HTTP_BAD_REQUEST;
         return ResponseEntity.badRequest().body(this);
     }
-    public ResponseEntity<?> accessDenied(){
+    public ResponseEntity<?> unauthorized(){
         this.code = Tags.HTTP_ACCESS_DENIED;
-        this.message = Tags.ACCESS_DENIED;
         return ResponseEntity.badRequest().body(this);
     }
     public ResponseEntity<?> internalServerError(){
@@ -32,9 +29,7 @@ public class GenericResponse<T> {
         this.message = ErrorMessages.PLEASE_TRY_AGAIN_LATER;
         return ResponseEntity.badRequest().body(this);
     }
-
     public ResponseEntity<?> response(){
         return ResponseEntity.badRequest().body(this);
     }
-
 }

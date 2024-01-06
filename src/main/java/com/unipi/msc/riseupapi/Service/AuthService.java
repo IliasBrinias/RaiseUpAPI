@@ -27,10 +27,10 @@ public class AuthService implements IAuth {
     @Override
     public ResponseEntity<?> register(RegisterRequest request) {
         if (userRepository.existsUserByUsername(request.getUsername())){
-            GenericResponse.builder().message(ErrorMessages.USERNAME_EXISTS).build().success();
+            return GenericResponse.builder().message(ErrorMessages.USERNAME_EXISTS).build().success();
         }
         if (userRepository.existsUserByEmail(request.getEmail())){
-            GenericResponse.builder().message(ErrorMessages.EMAIL_EXISTS).build().success();
+            return GenericResponse.builder().message(ErrorMessages.EMAIL_EXISTS).build().success();
         }
         User user = User.builder()
                 .email(request.getEmail())
@@ -54,7 +54,6 @@ public class AuthService implements IAuth {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
             user = userRepository.findByEmail(request.getEmail()).orElse(null);
         }
-        if (user == null) return  ResponseEntity.notFound().build();
         return GenericResponse.builder().data(UserPresenter.getPresenter(user,generateToken(user))).build().success();
     }
 
