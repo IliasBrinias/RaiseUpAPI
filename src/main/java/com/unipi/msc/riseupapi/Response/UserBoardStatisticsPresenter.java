@@ -2,12 +2,14 @@ package com.unipi.msc.riseupapi.Response;
 
 import lombok.*;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProgressPresenter {
-    private Long date;
+public class UserBoardStatisticsPresenter {
+    private Long boardId;
+    private String boardName;
+    private Long openTasks;
     private Long completedTasks;
 }

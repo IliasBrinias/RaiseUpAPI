@@ -216,7 +216,7 @@ public class TaskService implements ITask {
             if (request.getDueTo()!=null) task.setDueTo(request.getDueTo());
             if (request.getDifficulty()!=null) task.setDifficulty(request.getDifficulty());
             if (request.getCompleted()!=null) {
-                task.setDueTo(new Date().getTime());
+                if (request.getCompleted()) task.setDueTo(new Date().getTime());
                 task.setCompleted(request.getCompleted());
             }
             task = taskRepository.save(task);

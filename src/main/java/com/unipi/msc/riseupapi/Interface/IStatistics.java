@@ -1,13 +1,11 @@
 package com.unipi.msc.riseupapi.Interface;
 
-import com.unipi.msc.riseupapi.Request.StatisticsRequest;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 
 public interface IStatistics {
-    ResponseEntity<?> getStatistics(StatisticsRequest request);
+    ResponseEntity<?> getStatistics(Long dateFrom, Long dateTo);
 
-    ResponseEntity<?> getUsersStatistics(StatisticsRequest request);
+    ResponseEntity<?> getUsersStatistics(Long dateFrom, Long dateTo);
 
-    ResponseEntity<?> getUserStatistics(Long userId, StatisticsRequest request);
+    ResponseEntity<?> getUserStatistics(Long userId, Long dateFrom, Long dateTo);
 }
