@@ -17,6 +17,7 @@ public class TaskPresenter {
     private String description;
     private Long dueTo;
     private boolean completed;
+    private String difficulty;
     private ColumnPresenter step;
     private List<UserPresenter> users = new ArrayList<>();
     private List<TagPresenter> tags = new ArrayList<>();
@@ -27,6 +28,7 @@ public class TaskPresenter {
                 .description(task.getDescription())
                 .dueTo(task.getDueTo())
                 .completed(task.isCompleted())
+                .difficulty(task.getDifficulty()!=null?task.getDifficulty().toString():null)
                 .users(UserPresenter.getPresenter(task.getUsers()))
                 .tags(TagPresenter.getPresenter(task.getTags()))
                 .step(ColumnPresenter.getPresenterWithoutTask(task.getStep()))

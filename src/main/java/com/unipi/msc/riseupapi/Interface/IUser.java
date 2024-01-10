@@ -11,7 +11,7 @@ public interface IUser {
 
     ResponseEntity<?> getUserImage(Long userId);
 
-    ResponseEntity<?> searchUser(Long boardId, String keyword);
+    ResponseEntity<?> searchUser(Long boardId, boolean allUsers, String keyword);
 
     ResponseEntity<?> getUsers();
 

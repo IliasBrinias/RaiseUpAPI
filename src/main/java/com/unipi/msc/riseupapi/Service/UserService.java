@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -74,11 +73,10 @@ public class UserService implements IUser {
         }
     }
     @Override
-    public ResponseEntity<?> searchUser(Long boardId, String keyword) {
-        try {
-
+    public ResponseEntity<?> searchUser(Long boardId, boolean allUsers, String keyword) {
         List<User> userList;
         List<UserPresenter> presenters = new ArrayList<>();
+
         User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (keyword.isEmpty()){
             userList = userRepository.findAll();
@@ -88,23 +86,20 @@ public class UserService implements IUser {
         if (boardId!=0L){
             Board board = boardRepository.findById(boardId).orElse(null);
             if (board == null) return GenericResponse.builder().message(ErrorMessages.BOARD_NOT_FOUND).build().badRequest();
-            if (client == board.getOwner()){
-                userList.remove(client);
+            if (allUsers){
+                userList.remove(board.getOwner());
+                presenters = UserPresenter.getPresenter(userList);
+            } else {
+                for (User u :userList){
+                    if (u.getBoards().contains(board) || u == board.getOwner()) {
+                        presenters.add(UserPresenter.getPresenter(u));
+                    }
+                }
             }
-//            else {
-//                for (User u :userList){
-//                    if (u.getBoards().contains(board) && !Objects.equals(u.getId(), board.getOwner().getId())) {
-//                        presenters.add(UserPresenter.getPresenter(u));
-//                    }
-//                }
-//            }
+        }else {
+            presenters = UserPresenter.getPresenter(userList);
         }
-        presenters = UserPresenter.getPresenter(userList);
         return GenericResponse.builder().data(presenters).build().success();
-        }catch (Exception ignore){
-            ignore.printStackTrace();
-            return null;
-        }
 
     }
     @Override
