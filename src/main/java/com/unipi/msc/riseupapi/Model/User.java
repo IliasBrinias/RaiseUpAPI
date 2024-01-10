@@ -66,4 +66,8 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {return true;}
+
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
 }

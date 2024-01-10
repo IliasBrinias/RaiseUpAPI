@@ -1,5 +1,6 @@
 package com.unipi.msc.riseupapi.Service;
 
+import com.unipi.msc.riseupapi.Interface.INotify;
 import com.unipi.msc.riseupapi.Interface.ITask;
 import com.unipi.msc.riseupapi.Model.*;
 import com.unipi.msc.riseupapi.Repository.*;
@@ -23,6 +24,7 @@ public class TaskService implements ITask {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final StepRepository stepRepository;
+    private final INotify iNotify;
     @Override
     public ResponseEntity<?> createTask(TaskRequest request) {
         List<User> users = new ArrayList<>();
@@ -102,6 +104,7 @@ public class TaskService implements ITask {
         if (users == null){
             return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
         }
+
         task.setUsers(users);
         task = taskRepository.save(task);
 
@@ -159,6 +162,7 @@ public class TaskService implements ITask {
 
     @Override
     public ResponseEntity<?> editTask(Long taskId, TaskRequest request) {
+        User signedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Task task = taskRepository.findById(taskId).orElse(null);
         if (task == null){
             return GenericResponse.builder().message(ErrorMessages.TASK_NOT_FOUND).build().badRequest();
@@ -178,9 +182,13 @@ public class TaskService implements ITask {
             task = taskRepository.save(task);
         }
         if (request.getEmployeeIds()!=null){
+            List<User> usersToNotify = new ArrayList<>();
             List<User> newUsers = userRepository.findUsersByIdIn(request.getEmployeeIds()).orElse(null);
             if (newUsers == null){
                 return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+            }
+            for (User user:newUsers){
+                if (!task.getUsers().contains(user)) usersToNotify.add(user);
             }
             for (User user: task.getUsers()){
                 if (!newUsers.contains(user)){
@@ -197,6 +205,7 @@ public class TaskService implements ITask {
                     user = userRepository.save(user);
                 }
             }
+            iNotify.notifyUsers(signedUser, newUsers, task.getTitle());
         }
         if (request.getColumnId()!=null){
             Step step = stepRepository.findById(request.getColumnId()).orElse(null);

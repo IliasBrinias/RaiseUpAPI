@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "riseupandroid",
+  "private_key_id": "d6c69d157f34267bd804987371d0b5dbd994a79e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDAzhNDjARoHWaB\noyDIx6uMHy2dJIuNFY1VwKnGDrPPrkMgyd34yWRm1Tq92T30UjXxtKiv2qvJAaA+\nEEr4jSq+Y6Emj/IEDeULXNWdmW2623/mExa/W60OEK793jfeYxV3yCfPwQ4IkrKj\nAqhx4xxec258G1svYfZEw901jgi5bpsj1IJWoLjeWhsXyMVt/i7zfZ0kZ3VON+KJ\naASFQNlyPF2gaQJLN5SvOQoUgT8bIJ3VlC+sg0AT073XLsjG0iZCJEIwhbAQz9Y0\nD6qBXU1yNcljPO5hm7MidjDmW3Sl6GbysuEPz83Knb67JLVFRhzZ/yKFosgmudgT\n/rnM7L59AgMBAAECggEAFKK5xcP/AL8M0UPgEWfq1hohgVfU+9UFBdrou4L9VHVm\nnTlzNtp56CuwQtDf5FNxj0dyZTKhVOfbT76MrPeRo0Okjte0jncyPuTBFEIZ+s2I\nGIbjK2NTgqrfH9rLM1PQNhFyeWDvRemgPE7fhSOf+K1KyPZglxIEEANqnKhxX0SQ\nurSbtaFV/+gNEmDeDy0VS0JMYjpY/2lvaajDNONoKVZDL6WcM19/4apoUh5xqPbP\nNKT60kFwpkb9x8N2jPuEXKYFvE/NQnZKWSvKPSbWefIAqNXR/nNJOjUourv6ulrF\n2yPfquq4BJx4b72zVfgfIf/gzszTjgIXj7FlbAAiXQKBgQDk/NUuqPVjwKyH8oaZ\nNRJby5GfdQH1rO/tHVEU+HuBI2ieOECq0lEnPf63LUkPM8vG+AUlK1s9IrGVpq6+\nOsVMcuWLgfX0yLlyZyHAUc4naRZK7gZzIxN4Qvjpv04Uz9I/tkqI+Chfu97uYlU1\nzlsqHam9LzEZpjOysctCufDq5wKBgQDXjJFJTfxFdlCCTg1F5vscqPPZzUXSxzvo\ntKzVI5be5IuirNPVQ8vTBMw52OWjwOt0emcSg1YosJiWL/Gen0sssx3HkVH1U3dt\n58kvJG/ibWYCApJDwmio8PHsdk8ykXRX8zedqanHvgVrynGvuadNzXyTdPf5/tPg\nGKyFPqZi+wKBgB1qiWxUEin9X2ybcEUQN0qJjSyB2H2Z+LxqLrdV8G+3f8ILkesf\n14MGCMm5TJBiZAQsamTK/A6PfWavIfWYES5v+CMCz/jhLEmRDBnrqGMRseZwS23R\nDLg/SkCk7b/orqa2oT6VOoKJ3OqcwTuHRdjUNLDz9gfIfQ2wn170CgnzAoGBAL4w\n7yVSZY1ZB1Li0f1jASHZxkjhQoHogGkluvbaT05fNQKWItgj2R5aNmW4h3AFUvzU\n4EvKjWSb5hdnOHhxL+DCLz2fcUTZoCDfC3rIWNzfEMonQK3/RWAEMkMmZV1GUPUl\ny2YXhZKUja391HBsjT4uWYS3CfORsZwjyV5M2H2vAoGANLnwjqEo5E5ujyfDkTEq\nrfRRqF9BYcaYeNmvKSRN/xK+ODPbEMR+kYMXarnHVl3DPcuE5UdHi7kiAsuaXdkc\npJl8rhYrlLMSkpsRj9a6CKrMpTP5vHlqF7POuth2LuXHAQtwH+aMImtK+aE5SeuV\n2zFQIRgzToBA8sKjiMcnd38=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fiw2u@riseupandroid.iam.gserviceaccount.com",
+  "client_id": "111385438133650539761",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fiw2u%40riseupandroid.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
