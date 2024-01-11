@@ -106,6 +106,11 @@
 			<artifactId>firebase-admin</artifactId>
 			<version>9.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.deeplearning4j</groupId>
+			<artifactId>deeplearning4j-core</artifactId>
+			<version>1.0.0-beta7</version> <!-- Use the latest version available -->
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -41,7 +41,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @NonNull
     private Role role;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Task> tasks = new ArrayList<>();
 
     @Override

@@ -12,5 +12,5 @@ import java.util.List;
 public class UserStatisticsPresenter {
     private UserPresenter user;
     private Long completedTask;
-    private List<UserBoardStatisticsPresenter> userBoard;
+    private Long boards;
 }

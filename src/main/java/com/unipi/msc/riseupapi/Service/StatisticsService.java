@@ -1,6 +1,5 @@
 package com.unipi.msc.riseupapi.Service;
 
-import com.unipi.msc.riseupapi.Config.SecurityConfiguration;
 import com.unipi.msc.riseupapi.Interface.IStatistics;
 import com.unipi.msc.riseupapi.Model.Admin;
 import com.unipi.msc.riseupapi.Model.Board;
@@ -9,11 +8,13 @@ import com.unipi.msc.riseupapi.Model.User;
 import com.unipi.msc.riseupapi.Repository.BoardRepository;
 import com.unipi.msc.riseupapi.Repository.TaskRepository;
 import com.unipi.msc.riseupapi.Repository.UserRepository;
-import com.unipi.msc.riseupapi.Response.*;
+import com.unipi.msc.riseupapi.Response.GenericResponse;
+import com.unipi.msc.riseupapi.Response.ProgressPresenter;
+import com.unipi.msc.riseupapi.Response.UserPresenter;
+import com.unipi.msc.riseupapi.Response.UserStatisticsPresenter;
 import com.unipi.msc.riseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.hibernate5.SpringSessionContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -84,54 +85,67 @@ public class StatisticsService implements IStatistics {
     @Override
     public ResponseEntity<?> getUsersStatistics(Long dateFrom, Long dateTo) {
         List<UserStatisticsPresenter> userStatisticsPresenters = new ArrayList<>();
-        List<User> users = userRepository.findAll();
-        for (User user:users){
+        User signedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (signedUser instanceof Admin){
+            List<User> users = userRepository.findAll();
+            for (User user:users){
+                UserStatisticsPresenter userStatisticsPresenter = new UserStatisticsPresenter();
+                userStatisticsPresenter.setUser(UserPresenter.getPresenter(user));
+                userStatisticsPresenter.setCompletedTask(user.getTasks().stream().filter(Task::isCompleted).count());
+                userStatisticsPresenters.add(userStatisticsPresenter);
+            }
+            userStatisticsPresenters = userStatisticsPresenters.stream().sorted(Comparator.comparingLong(UserStatisticsPresenter::getCompletedTask).reversed()).collect(Collectors.toList());
+        }else {
             UserStatisticsPresenter userStatisticsPresenter = new UserStatisticsPresenter();
-            userStatisticsPresenter.setUser(UserPresenter.getPresenter(user));
-            userStatisticsPresenter.setCompletedTask(user.getTasks().stream().filter(Task::isCompleted).count());
+            userStatisticsPresenter.setUser(UserPresenter.getPresenter(signedUser));
+
+            List<User> users = new ArrayList<>();
+            users.add(signedUser);
+            userStatisticsPresenter.setCompletedTask(taskRepository.countAllByUsersIn(users));
+            userStatisticsPresenter.setBoards(boardRepository.countAllByOwnerIsOrUsersIn(signedUser,users));
+
             userStatisticsPresenters.add(userStatisticsPresenter);
         }
-        userStatisticsPresenters = userStatisticsPresenters.stream().sorted(Comparator.comparingLong(UserStatisticsPresenter::getCompletedTask).reversed()).collect(Collectors.toList());
         return GenericResponse.builder().data(userStatisticsPresenters).build().success();
     }
 
     @Override
     public ResponseEntity<?> getUserStatistics(Long userId, Long dateFrom, Long dateTo) {
-        Map<Long,Long> completeBoardTasks = new HashMap<>();
-        Map<Long,Long> boardOpenTasks = new HashMap<>();
-        Map<Long,String> boardName = new HashMap<>();
-        UserStatisticsPresenter userStatisticsPresenter = new UserStatisticsPresenter();
-        Long completedTasks = 0L;
-
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
-
-        userStatisticsPresenter.setUser(UserPresenter.getPresenter(user));
-        for (Task task: user.getTasks()){
-            Board board = task.getStep().getBoard();
-            if (!boardName.containsKey(board.getId())){
-                boardName.put(board.getId(),board.getTitle());
-            }
-            if (task.isCompleted()){
-                completeBoardTasks.merge(board.getId(),1L,Long::sum);
-            }else {
-                boardOpenTasks.merge(board.getId(),1L,Long::sum);
-            }
-        }
-
-        for(Map.Entry<Long,String> boardEntry:boardName.entrySet()){
-            UserBoardStatisticsPresenter userBoardStatisticsPresenter = new UserBoardStatisticsPresenter();
-            userBoardStatisticsPresenter.setBoardId(boardEntry.getKey());
-            userBoardStatisticsPresenter.setBoardName(boardEntry.getValue());
-            userBoardStatisticsPresenter.setOpenTasks(boardOpenTasks.getOrDefault(boardEntry.getKey(),0L));
-            userBoardStatisticsPresenter.setCompletedTasks(boardOpenTasks.getOrDefault(boardEntry.getKey(),0L));
-            completedTasks += userBoardStatisticsPresenter.getCompletedTasks();
-            userStatisticsPresenter.getUserBoard().add(userBoardStatisticsPresenter);
-        }
-
-        userStatisticsPresenter.setCompletedTask(completedTasks);
-
-        return GenericResponse.builder().data(userStatisticsPresenter).build().success();
+//        Map<Long,Long> completeBoardTasks = new HashMap<>();
+//        Map<Long,Long> boardOpenTasks = new HashMap<>();
+//        Map<Long,String> boardName = new HashMap<>();
+//        UserStatisticsPresenter userStatisticsPresenter = new UserStatisticsPresenter();
+//        Long completedTasks = 0L;
+//
+//        User user = userRepository.findById(userId).orElse(null);
+//        if (user == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
+//
+//        userStatisticsPresenter.setUser(UserPresenter.getPresenter(user));
+//        for (Task task: user.getTasks()){
+//            Board board = task.getStep().getBoard();
+//            if (!boardName.containsKey(board.getId())){
+//                boardName.put(board.getId(),board.getTitle());
+//            }
+//            if (task.isCompleted()){
+//                completeBoardTasks.merge(board.getId(),1L,Long::sum);
+//            }else {
+//                boardOpenTasks.merge(board.getId(),1L,Long::sum);
+//            }
+//        }
+//
+//        for(Map.Entry<Long,String> boardEntry:boardName.entrySet()){
+//            UserBoardStatisticsPresenter userBoardStatisticsPresenter = new UserBoardStatisticsPresenter();
+//            userBoardStatisticsPresenter.setBoardId(boardEntry.getKey());
+//            userBoardStatisticsPresenter.setBoardName(boardEntry.getValue());
+//            userBoardStatisticsPresenter.setOpenTasks(boardOpenTasks.getOrDefault(boardEntry.getKey(),0L));
+//            userBoardStatisticsPresenter.setCompletedTasks(boardOpenTasks.getOrDefault(boardEntry.getKey(),0L));
+//            completedTasks += userBoardStatisticsPresenter.getCompletedTasks();
+//            userStatisticsPresenter.getUserBoard().add(userBoardStatisticsPresenter);
+//        }
+//
+//        userStatisticsPresenter.setCompletedTask(completedTasks);
+//
+        return GenericResponse.builder().build().badRequest();
     }
 
     private Long getEndOfDay(long timestampMillis) {

@@ -19,9 +19,4 @@ public class StatisticsController {
     public ResponseEntity<?> getUsersStatistics(@RequestParam Long dateFrom, @RequestParam Long dateTo){
         return iStatistics.getUsersStatistics(dateFrom, dateTo);
     }
-    @GetMapping("user/{userId}")
-    public ResponseEntity<?> getUserStatistics(@PathVariable Long userId, @RequestParam Long dateFrom, @RequestParam Long dateTo){
-        return iStatistics.getUserStatistics(userId, dateFrom, dateTo);
-    }
-
 }

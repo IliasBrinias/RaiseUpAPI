@@ -13,4 +13,5 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
     List<Task> findAllByUsersInAndTitleContaining(List<User> users, String title);
     List<Task> findAllByDueToBetweenAndCompletedIsTrue(Long dateFrom, Long dateTo);
     List<Task> findAllByDueToBetweenAndCompletedIsTrueAndUsersIn(Long dateFrom, Long dateTo, List<User> users);
+    long countAllByUsersIn(List<User> users);
 }
