@@ -1,12 +1,14 @@
 package com.unipi.msc.riseupapi.Service;
 
 import com.unipi.msc.riseupapi.Interface.INotify;
+import com.unipi.msc.riseupapi.Interface.IRecommendation;
 import com.unipi.msc.riseupapi.Interface.ITask;
 import com.unipi.msc.riseupapi.Model.*;
 import com.unipi.msc.riseupapi.Repository.*;
 import com.unipi.msc.riseupapi.Request.TaskRequest;
 import com.unipi.msc.riseupapi.Response.GenericResponse;
 import com.unipi.msc.riseupapi.Response.TaskPresenter;
+import com.unipi.msc.riseupapi.Response.UserPresenter;
 import com.unipi.msc.riseupapi.Shared.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ public class TaskService implements ITask {
     private final TagRepository tagRepository;
     private final StepRepository stepRepository;
     private final INotify iNotify;
+    private final IRecommendation iRecommendation;
     @Override
     public ResponseEntity<?> createTask(TaskRequest request) {
         List<User> users = new ArrayList<>();
@@ -202,7 +205,7 @@ public class TaskService implements ITask {
             for (User user: newUsers){
                 if (!user.getTasks().contains(task)){
                     user.getTasks().add(task);
-                    user = userRepository.save(user);
+                    userRepository.save(user);
                 }
             }
             iNotify.notifyUsers(signedUser, newUsers, task.getTitle());
@@ -277,5 +280,16 @@ public class TaskService implements ITask {
 
         taskRepository.delete(task);
         return GenericResponse.builder().build().success();
+    }
+
+    @Override
+    public ResponseEntity<?> proposeUsers(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task == null){
+            return GenericResponse.builder().message(ErrorMessages.TASK_NOT_FOUND).build().badRequest();
+        }
+        List<User> users = iRecommendation.recommendUsers(task);
+        List<UserPresenter> presenters = UserPresenter.getPresenter(users);
+        return GenericResponse.builder().data(presenters).build().success();
     }
 }

@@ -20,6 +20,7 @@ public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
         }else if (ex instanceof BadCredentialsException) {
             return GenericResponse.builder().message(ErrorMessages.BAD_CREDENTIALS).build().badRequest();
         }else {
+            ex.printStackTrace();
             return GenericResponse.builder().build().internalServerError();
         }
     }

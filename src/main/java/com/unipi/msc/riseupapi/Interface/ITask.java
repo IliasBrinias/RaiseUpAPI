@@ -25,4 +25,6 @@ public interface ITask {
     ResponseEntity<?> searchTask(String keyword);
 
     ResponseEntity<?> deleteTask(Long taskId);
+
+    ResponseEntity<?> proposeUsers(Long taskId);
 }

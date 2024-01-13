@@ -45,6 +45,7 @@ public class UserPresenter {
         return presenters;
     }
     public static List<UserPresenter> getPresenter(List<User> users){
+        if (users == null) return new ArrayList<>();
         List<UserPresenter> presenters = new ArrayList<>();
         users.forEach(u -> presenters.add(getPresenter(u)));
         return presenters;

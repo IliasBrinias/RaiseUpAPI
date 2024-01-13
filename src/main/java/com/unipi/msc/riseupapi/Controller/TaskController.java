@@ -25,6 +25,10 @@ public class TaskController {
     public ResponseEntity<?> getTask(@PathVariable Long taskId){
         return iTask.getTask(taskId);
     }
+    @GetMapping("{taskId}/propose-users")
+    public ResponseEntity<?> proposeUsers(@PathVariable Long taskId){
+        return iTask.proposeUsers(taskId);
+    }
     @PostMapping
     public ResponseEntity<?> getBoardEmployees(@RequestBody TaskRequest request){
         return iTask.createTask(request);
