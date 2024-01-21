@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -68,7 +69,7 @@ public class UserService implements IUser {
                     .contentLength(file.length())
                     .contentType(MediaType.IMAGE_PNG)
                     .body(IOUtils.toByteArray(targetStream));
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -97,6 +98,7 @@ public class UserService implements IUser {
                 }
             }
         }else {
+            if (allUsers) userList.remove(userList.stream().filter(user -> Objects.equals(user.getId(), client.getId())).findFirst().get());
             presenters = UserPresenter.getPresenter(userList);
         }
         return GenericResponse.builder().data(presenters).build().success();

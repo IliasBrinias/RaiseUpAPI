@@ -73,12 +73,10 @@ public class TaskService implements ITask {
 
     @Override
     public ResponseEntity<?> moveTask(Long taskId, Long columnId) {
-
         Task task = taskRepository.findById(taskId).orElse(null);
         if (task == null){
             return GenericResponse.builder().message(ErrorMessages.TASK_NOT_FOUND).build().badRequest();
         }
-
         Step step = stepRepository.findById(columnId).orElse(null);
         if (step == null){
             return GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
@@ -175,6 +173,18 @@ public class TaskService implements ITask {
             if (tagList == null){
                 return GenericResponse.builder().message(ErrorMessages.TAG_NOT_FOUND).build().badRequest();
             }
+
+            List<Tag> removeTags = new ArrayList<>();
+            for (Tag tag : task.getTags()){
+                if (!tagList.contains(tag)) removeTags.add(tag);
+            }
+            task.getTags().removeAll(removeTags);
+            task = taskRepository.save(task);
+            for (Tag tag:removeTags){
+                tag.getTasks().remove(task);
+                tagRepository.save(tag);
+            }
+
             for (int i = 0; i < tagList.size(); i++) {
                 if (!tagList.get(i).getTasks().contains(task)) {
                     tagList.get(i).getTasks().add(task);
@@ -208,7 +218,7 @@ public class TaskService implements ITask {
                     userRepository.save(user);
                 }
             }
-            iNotify.notifyUsers(signedUser, newUsers, task.getTitle());
+            iNotify.notifyUsers(signedUser, usersToNotify, task.getTitle());
         }
         if (request.getColumnId()!=null){
             Step step = stepRepository.findById(request.getColumnId()).orElse(null);

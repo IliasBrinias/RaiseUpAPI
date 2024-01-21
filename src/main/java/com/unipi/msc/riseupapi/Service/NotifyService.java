@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class NotifyService implements INotify {
         List<Message> messages = new ArrayList<>();
         users.forEach(user -> {
             if (user.getFcmId() == null) return;
+            if (Objects.equals(user.getId(), signedUser.getId())) return;
             messages.add(Message.builder()
                 .setToken(user.getFcmId())
                 .putData("taskTitle", taskTitle)

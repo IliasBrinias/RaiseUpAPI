@@ -30,7 +30,7 @@ public class StatisticsService implements IStatistics {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final TaskRepository taskRepository;
-    private static final LocalTime TIME = LocalTime.of(0, 0);
+    private static final LocalTime TIME = LocalTime.of(2, 0);
 
     @Override
     public ResponseEntity<?> getStatistics(Long dateFrom, Long dateTo) {
@@ -38,6 +38,7 @@ public class StatisticsService implements IStatistics {
         if (dateFrom == null || dateTo == null){
             return GenericResponse.builder().message(ErrorMessages.COMPLETE_THE_MANDATORY_FIELDS).build().badRequest();
         }
+
         List<Task> tasks;
         if (user instanceof Admin){
             tasks = taskRepository.findAllByDueToBetweenAndCompletedIsTrue(dateFrom,dateTo);
@@ -49,13 +50,13 @@ public class StatisticsService implements IStatistics {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(dateFrom));
         ZonedDateTime zdt = ZonedDateTime.of(c.get(Calendar.YEAR),
-                                             c.get(Calendar.MONTH) + 1,
-                                             c.get(Calendar.DAY_OF_MONTH),
-                                             c.getMinimum(Calendar.HOUR),
-                                             c.getMinimum(Calendar.MINUTE),
-                                             c.getMinimum(Calendar.SECOND),
-                                             c.getMinimum(Calendar.MILLISECOND),
-                                             ZoneId.systemDefault()).with(TIME);
+                c.get(Calendar.MONTH) + 1,
+                c.get(Calendar.DAY_OF_MONTH),
+                0,
+                0,
+                0,
+                0,
+                ZoneId.systemDefault()).with(TIME);
 
         List<ProgressPresenter> presenters = new ArrayList<>();
         while (true){
@@ -63,25 +64,14 @@ public class StatisticsService implements IStatistics {
             long endOfDay = getEndOfDay(startOfDay);
             if (startOfDay > dateTo) break;
             Long countCompletedTasks = tasks.stream()
-                    .filter(task -> task.getDueTo() > startOfDay)
-                    .filter(task -> task.getDueTo() < endOfDay)
+                    .filter(task -> task.getDueTo() >= startOfDay)
+                    .filter(task -> task.getDueTo() <= endOfDay)
                     .count();
             presenters.add(ProgressPresenter.builder().date(startOfDay).completedTasks(countCompletedTasks).build());
             zdt = zdt.plusDays(1);
         }
-
         return GenericResponse.builder().data(presenters).build().success();
     }
-
-    private long getStartOfDay(long epochMilli) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(epochMilli);
-        c.set(Calendar.HOUR,c.getMinimum(Calendar.HOUR));
-        c.set(Calendar.MINUTE,c.getMinimum(Calendar.MINUTE));
-        c.set(Calendar.MILLISECOND,c.getMinimum(Calendar.MILLISECOND));
-        return c.getTimeInMillis();
-    }
-
     @Override
     public ResponseEntity<?> getUsersStatistics(Long dateFrom, Long dateTo) {
         List<UserStatisticsPresenter> userStatisticsPresenters = new ArrayList<>();
@@ -147,13 +137,20 @@ public class StatisticsService implements IStatistics {
 //
         return GenericResponse.builder().build().badRequest();
     }
-
+    private long getStartOfDay(long timestampMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(timestampMillis);
+        c.set(Calendar.HOUR,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.MILLISECOND,0);
+        return c.getTimeInMillis();
+    }
     private Long getEndOfDay(long timestampMillis) {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(timestampMillis));
-        c.set(Calendar.HOUR,c.getMaximum(Calendar.HOUR));
-        c.set(Calendar.MINUTE,c.getMaximum(Calendar.MINUTE));
-        c.set(Calendar.MILLISECOND,c.getMaximum(Calendar.MILLISECOND));
+        c.set(Calendar.HOUR,23);
+        c.set(Calendar.MINUTE,99);
+        c.set(Calendar.MILLISECOND,99);
         return c.getTimeInMillis();
     }
 }
