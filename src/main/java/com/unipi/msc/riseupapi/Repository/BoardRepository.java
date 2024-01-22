@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findAllByUsersInOrOwner(List<User> users, User user);
-    List<Board> findAllByUsersInAndTitleContaining(List<User> users, String title);
+    List<Board> findAllByUsersInOrOwnerIsInAndTitleContainingIgnoreCase(List<User> users, List<User> owners, String title);
     long countAllByOwnerIsOrUsersIn(User owner, List<User> users);
 }

@@ -61,7 +61,8 @@ public class UserService implements IUser {
     }
     @Override
     public ResponseEntity<?> getUserImage(Long userId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return GenericResponse.builder().message(ErrorMessages.USER_NOT_FOUND).build().badRequest();
         try {
             File file = new File(getDirPath() + File.separator + user.getImage().getFileName());
             InputStream targetStream = new FileInputStream(file);

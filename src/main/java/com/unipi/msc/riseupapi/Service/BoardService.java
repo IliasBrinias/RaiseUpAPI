@@ -19,10 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -147,12 +145,10 @@ public class BoardService implements IBoard {
     public ResponseEntity<?> searchBoards(String keyword) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<User> users = new ArrayList<>();
-        users.add(user);
-        List<Board> boards;
-        if (keyword.isEmpty()) {
-            boards = boardRepository.findAllByUsersInOrOwner(users,user);
-        }else{
-            boards = boardRepository.findAllByUsersInAndTitleContaining(users,keyword);
+        users.add(userRepository.findById(user.getId()).orElse(null));
+        List<Board> boards = boardRepository.findAllByUsersInOrOwner(users,user);
+        if (!keyword.isEmpty()) {
+            boards = boards.stream().filter(board -> board.getTitle().toLowerCase().contains(keyword.toLowerCase())).collect(Collectors.toList());
         }
         List<BoardPresenter> presenters = BoardPresenter.getPresenterWithoutSteps(boards);
         return GenericResponse.builder().data(presenters).build().success();

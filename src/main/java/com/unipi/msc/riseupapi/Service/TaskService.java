@@ -218,7 +218,7 @@ public class TaskService implements ITask {
                     userRepository.save(user);
                 }
             }
-            iNotify.notifyUsers(signedUser, usersToNotify, task.getTitle());
+            iNotify.notifyUsers(signedUser, usersToNotify, task.getTitle(), task.getId());
         }
         if (request.getColumnId()!=null){
             Step step = stepRepository.findById(request.getColumnId()).orElse(null);
@@ -253,7 +253,7 @@ public class TaskService implements ITask {
         List<Task> tasks;
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<User> users = new ArrayList<>();
-        users.add(user);
+        users.add(userRepository.findById(user.getId()).orElse(null));
         if (keyword.isEmpty()){
             tasks = taskRepository.findAllByUsersIn(users);
         }else {

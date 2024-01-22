@@ -19,7 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class NotifyService implements INotify {
     @Override
-    public void notifyUsers(User signedUser, List<User> users, String taskTitle) {
+    public void notifyUsers(User signedUser, List<User> users, String taskTitle, Long taskId) {
         List<Message> messages = new ArrayList<>();
         users.forEach(user -> {
             if (user.getFcmId() == null) return;
@@ -28,6 +28,7 @@ public class NotifyService implements INotify {
                 .setToken(user.getFcmId())
                 .putData("taskTitle", taskTitle)
                 .putData("addedBy", signedUser.getFullName())
+                .putData("taskId", String.valueOf(taskId))
                 .build());
         });
         if (messages.isEmpty()) return;

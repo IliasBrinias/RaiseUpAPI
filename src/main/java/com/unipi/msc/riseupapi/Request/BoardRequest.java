@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class BoardRequest {
     private String title;
-    private List<Long> employeesId = new ArrayList<>();
-    private List<String> columns = new ArrayList<>();
+    private List<Long> employeesId;
+    private List<String> columns;
 }
